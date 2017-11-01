@@ -11,7 +11,12 @@ public class row_excel extends Environment_proprties_Read{
 	public void readExcel() throws IOException
 	{
 		Excel_Utils RC= new Excel_Utils("TestData_Digi\\ExcelFramework_Digi.xlsx");
-		System.out.println(RC.getStringCellData(1, 1, "Controlsheet"));
+		
+		int col_no =RC.Current_Coulumn_Number("AddUsers", "UserName");
+		System.out.println(col_no);
+		
+		
+		/*System.out.println(RC.getStringCellData(1, 1, "Controlsheet"));
 		System.out.println(RC.getStringCellData(1, 2, "Controlsheet"));
 		System.out.println(RC.getStringCellData(1, 3, "Controlsheet"));
 		System.out.println(RC.getStringCellData(1, 4, "Controlsheet"));
@@ -22,7 +27,7 @@ public class row_excel extends Environment_proprties_Read{
 		System.out.println(RC.getStringCellData(1, 9, "Controlsheet"));
 		System.out.println(RC.getStringCellData(1, 10, "Controlsheet"));
 		System.out.println(RC.getStringCellData(1, 11, "Controlsheet"));
-		System.out.println(RC.getStringCellData(1, 12, "Controlsheet"));
+		System.out.println(RC.getStringCellData(1, 12, "Controlsheet"));*/
 		
 		String CreateSurvey_Questions_1=Environment("Sheet_CreateSurvey_Questions");
 		

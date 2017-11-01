@@ -28,7 +28,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 				
 				driver.get(URL);
 				reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
-				driver.manage().window().maximize();
+				//driver.manage().window().maximize();
 				driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 				
 				// where is the error?
@@ -111,6 +111,17 @@ public class Functional_Libraries extends Environment_proprties_Read{
 				//System.out.println(e.getMessage());
 			}
 	    }
+	public void clear_textfield(WebDriver driver, String xpath)
+	{
+		
+		WebElement element = driver.findElement(By.xpath(xpath));
+    	if(element!=null)
+    	{
+    		driver.findElement(By.xpath(xpath));
+    	}
+    	
+    		
+	}
 	/*public WebElement findElementsByXpath(WebDriver driver,String Xpath)
 	{
 		WebElement element = driver.findElement(By.xpath(""));
@@ -333,6 +344,31 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	 			//System.out.println(e.getMessage());
 	 		}
 	     }
+	public void selectDropdownByIndexxpath(WebDriver driver, String xpath,int index, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot) throws InterruptedException{
+   	 
+   	 try{
+    		
+    		FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+		            .withTimeout(80, TimeUnit.SECONDS)
+		            .pollingEvery(10, TimeUnit.SECONDS)
+		            .ignoring(NoSuchElementException.class);
+    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+    		WebElement element = driver.findElement(By.xpath(xpath));
+    		Select dropdownElement = new Select(element);
+    		Thread.sleep(3000);
+    		dropdownElement.selectByIndex(index);
+    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+    	}catch(NoSuchElementException e){
+			e.printStackTrace();
+			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			//System.out.println(e.getMessage());
+		}catch (WebDriverException e){
+			
+			e.printStackTrace();
+			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			//System.out.println(e.getMessage());
+		}
+    }
 	   
 	    public void entervalueByXpath(WebDriver driver, String xpath, String value, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot){
 	    	
@@ -500,7 +536,29 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    	else
 	    		return null;
 	    }
-
+	   public String elementEnabled(WebDriver driver, String xpath)
+	   {
+		   try
+		   {
+			   WebElement element = driver.findElement(By.xpath(xpath));
+			   System.out.println(element.isDisplayed());
+			   if(element.isDisplayed())
+			   {
+				   return "true";
+			   }
+		   }
+		   catch(NoSuchElementException e){
+				e.printStackTrace();
+				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				//System.out.println(e.getMessage());
+			}catch (WebDriverException e){
+				
+				e.printStackTrace();
+				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				//System.out.println(e.getMessage());
+			}
+		   return "false";
+	   }
 	    
 	    public void checkboxByxpath(WebDriver driver, String xpath, String value, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot) throws InterruptedException{
 	    	
@@ -621,6 +679,27 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	 		            .pollingEvery(10, TimeUnit.SECONDS)
 	 		            .ignoring(NoSuchElementException.class);
 	     		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
+	     		String vText = driver.findElement(By.xpath(locator)).getText();
+	     		return vText;
+	     		//Assert.assertEquals(vText.contains(text), true);
+	     		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	         }catch(NoSuchElementException e){
+	 			e.printStackTrace();
+	 			//reportstep("", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			//System.out.println(e.getMessage());
+	 		}
+			return null;
+	    	
+	    }
+	    public String getTextXPATH_WithoutClick(WebDriver driver, String locator,  String input, String Description, String ExpectedResult, String ActualResult, String Screenshot)
+	    {
+	    	 try{
+	     		
+	     		/*FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+	 		            .withTimeout(60, TimeUnit.SECONDS)
+	 		            .pollingEvery(10, TimeUnit.SECONDS)
+	 		            .ignoring(NoSuchElementException.class);*/
+	     		
 	     		String vText = driver.findElement(By.xpath(locator)).getText();
 	     		return vText;
 	     		//Assert.assertEquals(vText.contains(text), true);

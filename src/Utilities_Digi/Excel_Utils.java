@@ -167,6 +167,7 @@ public int Current_Coulumn_Number(String Sheet,String header_name) throws IOExce
 	for(int col=0;col<Total_Column;col++)
 	{
 		header[col]=Excel.getStringCellData(0, col, Sheet);
+		//System.out.println(header[col]);//==========================
 		if(header_name.equals(header[col]))
 		{
 			return col;
