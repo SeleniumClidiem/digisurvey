@@ -9,7 +9,8 @@ public class Logs_DigiSurvey {
 	 
 	// This is to print log for the beginning of the test case, as we usually run so many test cases as a test suite
 	 
-	public static void startTestCase(String sTestCaseName){
+	public static void startTestCase(String sTestCaseName)
+	{
 	 
 	    Log.info("****************************************************************************************");
 	 
@@ -41,13 +42,13 @@ public class Logs_DigiSurvey {
 	
 	 // Need to create these methods, so that they can be called  
 	 
-	public void info(String message) {
+	public static void info(String message) {
 	 
 	        Log.info(message);
 	 
 	        }
 	 
-	public void warn(String message) {
+	public static void warn(String message) {
 	 
 	    Log.warn(message);
 	 

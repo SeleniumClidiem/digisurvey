@@ -6,7 +6,7 @@
       <class name="BatchExecution_Digi.Hybrid_Framework_DigiSurvey">
         <methods>
           <include name="Setup"/>
-          <include name="Frame_Digi" invocation-numbers="0"/>
+          <include name="Frame_Digi" invocation-numbers="25"/>
           <include name="teardown"/>
         </methods>
       </class> <!-- BatchExecution_Digi.Hybrid_Framework_DigiSurvey -->

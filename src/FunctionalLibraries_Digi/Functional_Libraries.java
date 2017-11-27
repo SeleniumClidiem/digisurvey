@@ -2,10 +2,13 @@ package FunctionalLibraries_Digi;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
+//import java.util.NoSuchElementException;//removed
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;//added
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -14,6 +17,9 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+
+import Loggings_Digi.Logs_DigiSurvey;
 import Utilities_Digi.Environment_proprties_Read;
 import atu.testng.reports.ATUReports;
 import atu.testng.reports.logging.LogAs;
@@ -21,22 +27,22 @@ import atu.testng.selenium.reports.CaptureScreen;
 import atu.testng.selenium.reports.CaptureScreen.ScreenshotOf;
 
 public class Functional_Libraries extends Environment_proprties_Read{
+	
 	//Pass the url into the browser
+	
 		public void invokeApplication(WebDriver driver, String URL, String browser, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot){
 			
 			try{
 				
 				driver.get(URL);
-				reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.startTestCase(input);
 				//driver.manage().window().maximize();
 				driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-				
-				// where is the error?
-				
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 			//return driver;
@@ -47,18 +53,18 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			try{
 				
 				driver.navigate().to(navURL);
-				reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 				driver.manage().window().maximize();
 				driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 				
 			}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 		}
@@ -74,15 +80,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.id(Id)));
 	    		Thread.sleep(3000);
 	    		driver.findElement(By.id(Id)).click();
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -99,18 +105,39 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(Xpath)));
 	    		Thread.sleep(3000);
 	    		driver.findElement(By.xpath(Xpath)).click();
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
+	
+	public void disp_Message(WebDriver driver, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot) throws InterruptedException{
+    	
+    	try{
+    		
+    		FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+    		            .withTimeout(20, TimeUnit.SECONDS)
+    		            .pollingEvery(10, TimeUnit.SECONDS)
+    		            .ignoring(NoSuchElementException.class);
+    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+    	}catch(NoSuchElementException e){
+			e.printStackTrace();
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			//System.out.println(e.getMessage());
+		}catch (WebDriverException e){
+			
+			e.printStackTrace();
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			//System.out.println(e.getMessage());
+		}
+    }
 	public void clear_textfield(WebDriver driver, String xpath)
 	{
 		
@@ -165,15 +192,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.cssSelector(css)));
 	    		driver.findElement(By.cssSelector(css)).click();
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -189,15 +216,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			
 			waitforElement.until(ExpectedConditions.elementToBeClickable(By.name(name)));
 			driver.findElement(By.name(name)).click();
-			//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 		}catch(NoSuchElementException e){
 			e.printStackTrace();
-			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 			//System.out.println(e.getMessage());
 		}catch (WebDriverException e){
 			
 			e.printStackTrace();
-			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 			//System.out.println(e.getMessage());
 		}
 	}
@@ -214,15 +241,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		//waitforElement.until(ExpectedConditions.elementToBeClickable(By.id(ID)));    commented
 	    		driver.findElement(By.id(ID)).clear();
 	    		driver.findElement(By.id(ID)).sendKeys(value);
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -238,15 +265,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.name(name)));
 	    		driver.findElement(By.name(name)).clear();
 	    		driver.findElement(By.name(name)).sendKeys(value);
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -264,15 +291,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		Select dropdownElement = new Select(element);
 	     		Thread.sleep(4000);
 	     		dropdownElement.selectByVisibleText(text);
-	     		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}
 	     }
@@ -303,15 +330,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		}
 	     		
 	     		
-	     		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}
 	    	 
@@ -332,15 +359,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		Select dropdownElement = new Select(element);
 	     		Thread.sleep(3000);
 	     		dropdownElement.selectByVisibleText(text);
-	     		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 	 			//System.out.println(e.getMessage());
 	 		}
 	     }
@@ -357,15 +384,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
     		Select dropdownElement = new Select(element);
     		Thread.sleep(3000);
     		dropdownElement.selectByIndex(index);
-    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
     	}catch(NoSuchElementException e){
 			e.printStackTrace();
-			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 			//System.out.println(e.getMessage());
 		}catch (WebDriverException e){
 			
 			e.printStackTrace();
-			//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 			//System.out.println(e.getMessage());
 		}
     }
@@ -383,15 +410,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		//driver.findElement(By.xpath(xpath)).clear();but sir we have to enter the value in that xpth
 	    		
 	    		driver.findElement(By.xpath(xpath)).sendKeys(value);
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -409,15 +436,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		List<WebElement> o_note_col = driver.findElements(By.xpath(xpath));
 	    		
 				o_note_col.get(index).sendKeys(value);
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -462,20 +489,21 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		//driver.findElement(By.cssSelector(css)).clear();
 	    		
 	    		driver.findElement(By.cssSelector(css)).sendKeys(value);
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
 	    
-	    void SelectCheckboxbyDropdown(WebDriver driver1 , String text) {
+	    void SelectCheckboxbyDropdown(WebDriver driver1 , String text, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot) 
+	    {
 			
 	        try{
 	              List<WebElement> Value = driver1.findElements(By.className("checkbox"));
@@ -487,13 +515,14 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	                                      break;
 	                                }
 	                    }
-	                  //reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	                 reportstep(driver1,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
-				
+				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
@@ -511,15 +540,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		
 	    		driver.findElement(By.id(id)).click();
 	    		
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -536,7 +565,19 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    	else
 	    		return null;
 	    }
-	   public String elementEnabled(WebDriver driver, String xpath)
+	    public String JS_Element_Find(WebDriver driver, String xpath)
+	    {
+	    	JavascriptExecutor js = (JavascriptExecutor)driver;
+	    	WebElement element = driver.findElement(By.xpath(xpath));
+	    	if(element!=null)
+	    	{
+	    		js.executeScript("arguments[0].scrollIntoView();", element);
+	    		return "true";
+	    	}
+	    	return null;
+	    	
+	    }
+	   public String elementDisplayed(WebDriver driver, String xpath, String Description) throws StaleElementReferenceException
 	   {
 		   try
 		   {
@@ -544,16 +585,83 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			   System.out.println(element.isDisplayed());
 			   if(element.isDisplayed())
 			   {
+				   Logs_DigiSurvey.info(Description);
+				   return "true";
+			   }
+		   }
+		   catch(NoSuchElementException e)
+		   {
+				e.printStackTrace();
+				reportstep(driver,"", Description, "FAILED", "", "","Y");
+				Logs_DigiSurvey.info("element is not displayed on web page");
+				return "false";
+			}
+		   catch (WebDriverException e)
+		   {
+				
+				e.printStackTrace();
+				reportstep(driver,"", Description, "FAILED", "", "","Y");
+				Logs_DigiSurvey.info("element is not displayed on web page");
+				return "false";
+			}
+		   
+		   return "false";
+	   }
+	   public String elementEnabled(WebDriver driver, String xpath, String Description) throws StaleElementReferenceException
+	   {
+		   try
+		   {
+			   WebElement element = driver.findElement(By.xpath(xpath));
+			   System.out.println(element.isEnabled());
+			   if(element.isEnabled())
+			   {
+				   Logs_DigiSurvey.info(Description);
+				   return "true";
+			   }
+		   }
+		   catch(NoSuchElementException e)
+		   {
+				e.printStackTrace();
+				reportstep(driver,"", Description, "FAILED", "", "","Y");
+				//System.out.println(e.getMessage());
+				Logs_DigiSurvey.info("element is not enabled on web page");
+				return "false";
+			}
+		   catch (WebDriverException e)
+		   {
+				
+				e.printStackTrace();
+				reportstep(driver,"", Description, "FAILED", "", "","Y");
+				Logs_DigiSurvey.info("element is not enabled on web page");
+				//reportstep(input, Description, "FAIL
+				return "false";
+			}
+		   
+		   return "false";
+	   }
+	   
+	   public String elementSelected(WebDriver driver, String xpath)
+	   {
+		   try
+		   {
+			   WebElement element = driver.findElement(By.xpath(xpath));
+			   System.out.println(element.isSelected());
+			   if(element.isSelected())
+			   {
 				   return "true";
 			   }
 		   }
 		   catch(NoSuchElementException e){
-				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				//e.printStackTrace();
+				reportstep(driver,"", "Element Not Selected", "FAILED", "", "","Y");
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
-			}catch (WebDriverException e){
+			}
+		   catch (WebDriverException e){
 				
 				e.printStackTrace();
+				reportstep(driver,"", "Element Not Selected", "FAILED", "", "","Y");
+				Logs_DigiSurvey.info(e.getMessage());
 				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
@@ -571,15 +679,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 	    		Thread.sleep(3000);
 	    		driver.findElement(By.xpath(xpath)).click();
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -596,15 +704,18 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		
 	    		driver.findElement(By.id(id)).click();
 	    		
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -620,15 +731,17 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 	    		
 	    		driver.findElement(By.xpath(xpath)).click();
-	    		//reportstep(input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -644,10 +757,11 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.id(locator)));
 	    		String vText = driver.findElement(By.id(locator)).getText();
 	    		Assert.assertEquals(vText.contains(text), true);
-	    		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep("", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -660,12 +774,14 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			            .pollingEvery(10, TimeUnit.SECONDS)
 			            .ignoring(NoSuchElementException.class);
 	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
+	    		
 	    		String vText = driver.findElement(By.xpath(locator)).getText();
 	    		Assert.assertEquals(vText.contains(text), true);
-	    		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+	    		reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				//reportstep("", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -679,13 +795,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	 		            .pollingEvery(10, TimeUnit.SECONDS)
 	 		            .ignoring(NoSuchElementException.class);
 	     		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(locator)));
+	     		reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     		String vText = driver.findElement(By.xpath(locator)).getText();
 	     		return vText;
 	     		//Assert.assertEquals(vText.contains(text), true);
 	     		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	         }catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			//reportstep("", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			Logs_DigiSurvey.info(e.getMessage());
 	 			//System.out.println(e.getMessage());
 	 		}
 			return null;
@@ -699,14 +817,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	 		            .withTimeout(60, TimeUnit.SECONDS)
 	 		            .pollingEvery(10, TimeUnit.SECONDS)
 	 		            .ignoring(NoSuchElementException.class);*/
-	     		
+	    		 reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     		String vText = driver.findElement(By.xpath(locator)).getText();
 	     		return vText;
 	     		//Assert.assertEquals(vText.contains(text), true);
 	     		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	         }catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			//reportstep("", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			Logs_DigiSurvey.info(e.getMessage());
 	 			//System.out.println(e.getMessage());
 	 		}
 			return null;
@@ -715,12 +834,17 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    
 	    //issue resolved?
 	  
-	    public static void reportstep(String input, String Description,String Status, String ExpectedResult, String ActualResult, String Screenshot){
+	    public static void reportstep(WebDriver driver,String input, String Description,String Status, String ExpectedResult, String ActualResult, String Screenshot){
 	    	
+	    	//ATUReports.setWebDriver(driver);
+	    	//System.setProperty("atu.reporter.config", "lib\\atu.properties");//D:\\Sailaja\\ATUReporter_Selenium_testNG_5.5 BETA + ATU Recorder 2.1+javadoc+propfile\\atu.properties
+	    	//System.out.println(Status);
+	    	//System.out.println(Screenshot+" Expected to be Y");
 	    	if(Status.toUpperCase().equals("SUCCESS") && Screenshot.toUpperCase().equals("Y"))
 	    	{
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));
 	    		ATUReports.add(Description, input, ExpectedResult, ActualResult, LogAs.PASSED, new CaptureScreen(ScreenshotOf.BROWSER_PAGE));
+	    		
 	    	}else if(Status.toUpperCase().equals("SUCCESS") && Screenshot.toUpperCase().equals("N")) // where is this clss?
 	    	{
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));can't have
@@ -768,14 +892,13 @@ public class Functional_Libraries extends Environment_proprties_Read{
 				if(select_index==selecttag_opitons.size())
 				{
 					return "false";
-				
-				
 				}
 				
 			}
 			catch (NullPointerException e) 
 			{
-				
+				reportstep(driver, "", "error occured in dropdown cheking element", "", "", "", "Y");
+				Logs_DigiSurvey.info(e.getMessage());
 				e.printStackTrace();
 			}
 			return null;

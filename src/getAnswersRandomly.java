@@ -76,7 +76,7 @@ public class getAnswersRandomly extends Environment_proprties_Read
 				for(int i=1;i<=chksize;i++)//to get each option text
 				{
 					//get the option text from survey link
-					if(fl.elementEnabled(driver, Que_Xpath+"["+queno+"]"+checkboxtext_Xapth+"["+i+"]"+checkboxtextspan_Xapth).equals("true"))
+					if(fl.elementEnabled(driver, Que_Xpath+"["+queno+"]"+checkboxtext_Xapth+"["+i+"]"+checkboxtextspan_Xapth,"").equals("true"))
 					{
 						//getting 1st option value from survey link
 						responseoptions=driver.findElement(By.xpath(Que_Xpath+"["+queno+"]"+checkboxtext_Xapth+"["+i+"]"+checkboxtextspan_Xapth)).getText();
