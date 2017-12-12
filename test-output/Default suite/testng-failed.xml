@@ -3,13 +3,14 @@
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="BatchExecution_Digi.Hybrid_Framework_DigiSurvey">
+      <class name="BatchExecution_Digi.Hybrid">
         <methods>
           <include name="Setup"/>
-          <include name="Frame_Digi" invocation-numbers="25"/>
           <include name="teardown"/>
+          <include name="CompanyLogin_CreatingUsers_FillingCompanyProfile_FillingMYProfile_CompanyLogout" invocation-numbers="0"/>
+          <include name="CompanyLogin_CreateSurvey_EditUpdateSurvey_ShareSurvey_EndUSerResponse_ResponseValidationByCompany" invocation-numbers="0"/>
         </methods>
-      </class> <!-- BatchExecution_Digi.Hybrid_Framework_DigiSurvey -->
+      </class> <!-- BatchExecution_Digi.Hybrid -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

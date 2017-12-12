@@ -19,11 +19,11 @@ public class DB_Connection_Digi_Candit {
 		//ExcelUtils RC = new ExcelUtils("TestData\\RegisterCompany.xlsx");
 		//fl.entervalueByName("", "", RC.getStringCellData(i, 5, "Sheet1"),"", "", "", "", "");
 		
-		String connectionUrl = "jdbc:sqlserver://198.71.226.6:1433;" +  
-		         "databaseName=Clidiem_V1;user=clidiem;password=Clidiem@123";  
+		/*String connectionUrl = "jdbc:sqlserver://198.71.226.6:1433;" +  
+		         "databaseName=Clidiem_V1;user=clidiem;password=Clidiem@123";  */
 		
-	/*	String connectionUrl = "jdbc:sqlserver://SERVER-PC:1433;" +  
-		         "databaseName=Clidiem_Dev;user=sa;password=DBserver@123";   */
+		String connectionUrl = "jdbc:sqlserver://SERVER-PC:1433;" +  
+		         "databaseName=DigiSurvey_26_Oct;user=sa;password=DBserver@123";   
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			conn = DriverManager.getConnection(connectionUrl);
 			stmt = conn.createStatement(); 

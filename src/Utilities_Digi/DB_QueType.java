@@ -50,4 +50,23 @@ public class DB_QueType {
 		 return i;
 		
 	}
+	public static String  Db_qtype_Survey(String surveyname, String quetext) throws ClassNotFoundException, SQLException
+	{
+		String connectionUrl = "jdbc:sqlserver://SERVER-PC:1433;" +  
+		         "databaseName=DigiSurvey_26_Oct;user=sa;password=DBserver@123";   
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			conn = DriverManager.getConnection(connectionUrl);
+			stmt = conn.createStatement();
+			String SQL="SELECT AnswerType FROM Tbl_MAnswerTypes where AnswerTypeId= (SELECT AnswerType FROM Tbl_LSurveyQuestions where Questionnaire=(SELECT QuestionnaireId FROM Tbl_LSurveys where QuestionnaireName='"+surveyname+"') AND Question='"+quetext+"')";
+			rs = stmt.executeQuery(SQL);
+			
+		 while (rs.next()) {  
+	            //System.out.println(rs.getString("VerificationCode"));  
+	            i=rs.getString("AnswerType");
+	            System.out.println("Question Type is "+i);
+	            
+	         }
+		 return i;
+		
+	}
 }

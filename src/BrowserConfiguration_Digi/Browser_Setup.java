@@ -20,10 +20,9 @@ import atu.testng.reports.listeners.ATUReportsListener;
 import atu.testng.reports.listeners.ConfigurationListener;
 import atu.testng.reports.listeners.MethodListener;
 
+public class Browser_Setup extends Environment_proprties_Read 
+{
 
-
-public class Browser_Setup extends Environment_proprties_Read {
-	
 public static WebDriver driver;
 Functional_Cases_propread func_cases = new Functional_Cases_propread();
 	
@@ -81,19 +80,7 @@ Functional_Cases_propread func_cases = new Functional_Cases_propread();
 	
 	@AfterTest
 	public void teardown() throws InterruptedException {
-		Thread.sleep(5000);
-		
-		/*System.out.println("CompanyLogout");
-		try 
-		{
-			func_cases.CompanyLogout(driver);
-		} 
-		catch (IOException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		 // System.out.println("CompanyLoggedout");
+		//Thread.sleep(5000);
 		driver.quit();
 	}
 

@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -40,7 +41,9 @@ import Utilities_Digi.clickTabRobo;
 import Utilities_Digi.closeopenedtab_robo;
 import Utilities_Digi.copiedText_Robo;
 import Utilities_Digi.copy_OpenTab_Paste;
+import Utilities_Digi.excelRW;
 import Utilities_Digi.newTab_robot;
+import Utilities_Digi.pasteLinkinchildRobo;
 import Utilities_Digi.paste_CopiedSurveyLinkRobo;
 import Utilities_Digi.scrollDownInternal_Robo;
 import Utilities_Digi.select_delete;
@@ -54,7 +57,109 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 	UploadFile_Robot UR = new UploadFile_Robot();
 	String FEIN_From_Excel;
 	String oldTab;
+	String alert;
+	String alert_contacts;
+	String alert_bank;
+	String alert_doc;
+	String alert_publicView;
+	int failed_Fields_comInfo;
+	int failed_Fields_contacts;
+	int failed_Fields_bank;
+	int failed_Fields_doc;
+	int failed_Fields_pubView1;
+	int failed_Fields_pubView2;
+	int failed_Fields_pubView;
+	int document_rows=0;
 	
+	public void adminLogin(WebDriver driver, String emailID, String password) throws IOException, InterruptedException
+	{
+		String admin_URL=Environment("admin_URL");
+		String emailID_admin_Xpath=Environment("emailID_admin_Xpath");
+		String password_admin_Xpath=Environment("password_admin_Xpath");
+		String login_admin_Xpath=Environment("login_admin_Xpath");
+		
+		fl.invokeApplication(driver, admin_URL, "Chrome", "http://localhost:4034/SuperAdminArea/ClidiemUser/ClidiemLogin", "Login to Digi Admin", "Launching the Digi Admin Login Page", "", "Y");
+		System.out.println(emailID);
+		fl.entervalueByXpath(driver, emailID_admin_Xpath, emailID, emailID, "", "enter emailId", "", "");
+		System.out.println(password);
+		fl.entervalueByXpath(driver, password_admin_Xpath, password, password, "", "enter Password", "", "");
+		fl.ClickByXpath(driver, login_admin_Xpath, "", "Click on Login button", "Navigate to home page succesful", "", "Y");
+	}
+	public void adminLogout(WebDriver driver) throws IOException, InterruptedException
+	{
+		String image_logout_admin_Xpath=Environment("image_logout_admin_Xpath");
+		String logout_Xpath=Environment("logout_Xpath");
+		
+		fl.ClickByXpath(driver, image_logout_admin_Xpath, "", "", "Click on Logout List", "", "");
+		fl.ClickByXpath(driver, logout_Xpath, "", "", "click on logout option", "", "");
+	}
+	public void adminUsers(WebDriver driver, String user, String email, String contact, String role, String password) throws IOException, InterruptedException
+	{
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
+		String users_Admin_Xpath=Environment("users_Admin_Xpath");
+		String search_AU_Xpath=Environment("search_AU_Xpath");
+		String norecords_AU_Xpath=Environment("norecords_AU_Xpath");
+		String add_AU_Xpath=Environment("add_AU_Xpath");
+		String user_AU_Xpath=Environment("user_AU_Xpath");
+		String email_AU_Xpath=Environment("email_AU_Xpath");
+		String contact_AU_Xpath=Environment("contact_AU_Xpath");
+		String role_AU_Xpath=Environment("role_AU_Xpath");
+		String roleOptions_AU_Xpath=Environment("roleOptions_AU_Xpath");
+		String password_AU_Xpath=Environment("password_AU_Xpath");
+		String confirmPwd_AU_Xpath=Environment("confirmPwd_AU_Xpath");
+		String save_AU_Xpath=Environment("save_AU_Xpath");
+		String succesAlert_AU_Xpath=Environment("succesAlert_AU_Xpath");
+		String validationfail_AU_Xpath=Environment("validationfail_AU_Xpath");
+		
+		int failed=0;
+		fl.ClickByXpath(driver, users_Admin_Xpath, "", "", "Creating Users", "", "");
+		
+		fl.entervalueByXpath(driver, search_AU_Xpath, user, "", "", "Search with username before create user", "", "");
+		int noRec=fun_cas.listSize(driver, norecords_AU_Xpath);
+		if(noRec==1)
+		{
+			fl.ClickByXpath(driver, add_AU_Xpath, "", "", "Click on add", "", "");
+			fl.entervalueByXpath(driver, user_AU_Xpath, user, "", "", "Enter username", "", "");
+			int failed1=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed1;
+			fl.entervalueByXpath(driver, email_AU_Xpath, email, "", "", "enter email", "", "");
+			int failed2=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed2;
+			fl.entervalueByXpath(driver, contact_AU_Xpath, contact, "", "", "enter contact no", "", "");
+			int failed3=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed3;
+			String role_check=fl.checkOptionValueInSelect(driver, role_AU_Xpath, roleOptions_AU_Xpath, role);
+			int failed4=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed4;
+			if(role_check.equals("true"))
+				fl.selectDropdownByxpath(driver, role_AU_Xpath, role, "", "", "Role to be selected", "", "");
+			else
+				fl.disp_Message(driver, "", "", "Mentioned Role is not existed in dropdown", "", "");
+			int failed5=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed5;
+			fl.entervalueByXpath(driver, password_AU_Xpath, password, "", "", "password to be entered", "", "");
+			int failed6=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed6;
+			fl.entervalueByXpath(driver, confirmPwd_AU_Xpath, password, "", "", "password to be entered", "", "");
+			int failed7=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			failed=failed7;
+			fl.ClickByXpath(driver, save_AU_Xpath, "", "", "Click on save", "", "");
+			//int failed=fun_cas.listSize(driver, validationfail_AU_Xpath);
+			if(failed==0)
+			{
+				Thread.sleep(3000);
+				String suc_alert=fl.getTextXPATH(driver, succesAlert_AU_Xpath, "", "", "Get Success Text", "", "");
+				fl.disp_Message(driver, "", "", "", suc_alert, "");
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Mandidatory fields are not Filled", "", "");
+			}
+		}
+		else
+			fl.disp_Message(driver, "", "", "User Already Existed", "", "");
+		
+	}
 	public String companyBase(WebDriver driver, String petitionTitle) throws IOException, InterruptedException
 	{
 		String status = null;
@@ -491,23 +596,28 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		System.out.println(CompanyLoginButton_xpath);*/
 
 		try {
-			
+			Functional_Cases_propread fun_cas= new Functional_Cases_propread();
 			//Thread.sleep(10000);
 			fl.invokeApplication(driver, Company_Baseurl, "Chrome", "http://localhost:4034/Account/Login", "Launching The App", "launch the App Home Page", "Launched the page", "Y");
 			Logs_DigiSurvey.info("Invoke the application");
 
 			driver.manage().window().maximize();
 			//fl.ClickByXpath(driver, Digi_CompanyLoginxpath, "", "", "", "", "");
-
+			
+			fun_cas.clearTextfield(driver, Company_EmailIDxpath, EmailID);
+			Thread.sleep(10000);
 			fl.entervalueByXpath(driver, Company_EmailIDxpath, EmailID, "", "", "", "", "");
 			Logs_DigiSurvey.info("Entering username");
-
+			
+			fun_cas.clearTextfield(driver, Company_Passwordxpath, password);
+			Thread.sleep(10000);
 			fl.entervalueByXpath(driver, Company_Passwordxpath, password, "", "", "", "", "");
 			Logs_DigiSurvey.info("Entering password");
 
-			Thread.sleep(3000);
+			
 			// fl.ClickByID(driver, Environment("CompanyLoginbuttonID"), "",
 			// "", "", "", "");
+			Thread.sleep(10000);
 			fl.ClickByXpath(driver, Company_LoginButtonxpath, "", "", "Login button to be clicked", "", "");
 			Logs_DigiSurvey.info("Click on Login button Successful");
 			
@@ -519,6 +629,153 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			fl.disp_Message(driver, "", "Invoke Application Failed", "", "", "Y");
 		}
 
+	}
+	public void validateReferedFriends(WebDriver driver, String name) throws IOException, InterruptedException
+	{
+		String Company_LogoXPATH=Environment("Company_LogoXPATH");
+		String MyReferrals_Company_Xpath=Environment("MyReferrals_Company_Xpath");
+		String advancedSearch_MR_Xpath=Environment("advancedSearch_MR_Xpath");
+		String myRefValid_MR_Xpath=Environment("myRefValid_MR_Xpath");
+		String searchName_MR_Xpath=Environment("searchName_MR_Xpath");
+		String existedRow_MR_Xpath=Environment("existedRow_MR_Xpath");
+		String noRec_MR_Xpath=Environment("noRec_MR_Xpath");
+		String nameValid_MR_Xpath=Environment("nameValid_MR_Xpath");
+		
+		fl.JS_Element_Find(driver, Company_LogoXPATH);
+		fl.ClickByXpath(driver, Company_LogoXPATH, "", "Validating registered refered Friends", "click on logout menu", "", "");
+		fl.ClickByXpath(driver, MyReferrals_Company_Xpath, "", "", "click on myReferrals", "", "");
+		String myRefPage=fl.getTextXPATH(driver, myRefValid_MR_Xpath, "", "Validating My Referrals list loaded or not", "", "", "");
+		if(!myRefPage.contains("My Referrals"))
+		{
+			Assert.fail();
+		}
+		fl.ClickByXpath(driver, advancedSearch_MR_Xpath, "", "", "click on AdvancedSearch", "", "");
+		fl.entervalueByXpath(driver, searchName_MR_Xpath, name, "", "", "enter search text:"+name, "", "");
+		List<WebElement> cols = driver.findElements(By.xpath(existedRow_MR_Xpath));
+		int col = cols.size();
+		if(col==1)
+		{
+			if(fl.elementDisplayed(driver, noRec_MR_Xpath, "").equals("true"))
+			{
+				fl.disp_Message(driver, "", "", "No records Found with "+name, "", "Y");
+			}
+		}
+		else
+		{
+			List<WebElement> refered =driver.findElements(By.xpath(nameValid_MR_Xpath));
+			int size = refered.size();
+			if(size==1)
+			{
+				String search = fl.getTextXPATH(driver, nameValid_MR_Xpath+"["+1+"]", "", "", "", "", "");
+				if(search.equals(name))
+				{
+					fl.disp_Message(driver, "", "", "Registered user with Reference Link Added to My Refferals Succesfully", "", "Y");
+				}
+				else
+				{
+					fl.disp_Message(driver, "", "", "No records Found with  "+name, "", "Y");
+				}
+			}
+			else
+			{
+				if(size>1)
+				{
+					for(int i=1;i<=size;i++)
+					{
+						String search = fl.getTextXPATH(driver, nameValid_MR_Xpath+"["+i+"]", "", "", "", "", "Y");
+						if(search.equals(name))
+						{
+							fl.disp_Message(driver, "", "", "Registered user with Reference Link Added to My Refferals Succesfully", "", "Y");
+						}
+						else
+						{
+							fl.disp_Message(driver, "", "", "No records Found with  "+name, "", "Y");
+						}
+					}
+				}
+			}
+		}
+		/*try
+		{
+		if(row==1)
+		{
+			if(fl.elementDisplayed(driver, noRec_MR_Xpath, "").equals("true"))
+			{
+				fl.disp_Message(driver, "", "", "No records Found with "+name, "", "");
+			}
+			else
+			{
+			if(fl.elementEnabled(driver, nameValid_MR_Xpath+"["+1+"]", "").equals("true"))
+			{
+				String search = fl.getTextXPATH(driver, nameValid_MR_Xpath+"["+1+"]", "", "", "", "", "");
+				if(search.equals(name))
+				{
+					fl.disp_Message(driver, "", "", "Registered user with Reference Link Added to My Refferals Succesfully", "", "");
+				}
+			}
+		}
+		else
+		{
+			List<WebElement> refered =driver.findElements(By.xpath(nameValid_MR_Xpath));
+			int size = refered.size();
+			for(int i=1;i<=size;i++)
+				{
+					String search = fl.getTextXPATH(driver, nameValid_MR_Xpath+"["+i+"]", "", "", "", "", "");
+					if(search.equals(name))
+					{
+						fl.disp_Message(driver, "", "", "Registered user with Reference Link Added to My Refferals Succesfully", "", "");
+					}
+				}
+		}
+		}
+		catch(NoSuchElementException e)
+		{
+			
+		}*/
+		//========================================
+		
+		
+		
+			
+		
+		
+	}
+	public void referFriends(WebDriver driver, String emailIds) throws IOException, InterruptedException
+	{
+		Excel_Utils util = new Excel_Utils(Environment("refer_Excel"));
+		String referalLinktxtCopy_Xpath=Environment("referalLinktxtCopy_Xpath");
+		String referalLinkCopy_Xpath=Environment("referalLinkCopy_Xpath");
+		String referShare_Xpath=Environment("referShare_Xpath");
+		String emailId_Xpath=Environment("emailId_Xpath");
+		String referButton_Xpath=Environment("referButton_Xpath");
+		String doneIndividual_Xpath=Environment("doneIndividual_Xpath");
+		
+		String Parent=driver.getWindowHandle();
+		
+		fl.ClickByXpath(driver, referalLinktxtCopy_Xpath, "", "", "Copy Referal Link", "", "");
+		
+		copiedText_Robo Copy_Survey_Link = new copiedText_Robo();
+		Thread.sleep(3000);
+		Set<String> set = new HashSet<String>(driver.getWindowHandles());
+		System.out.println(set.size());
+		for(String tab : set)
+		{
+			System.out.println("window :"+tab);
+		}
+		set.remove(Parent);
+		driver.switchTo().window(set.iterator().next());
+		Thread.sleep(3000);
+		String referURL= driver.getCurrentUrl();
+		System.out.println(referURL);
+		driver.close();
+		driver.switchTo().window(Parent);
+		excelRW.writeExcel(Environment("refer_Excel"), 1, referURL);
+		fl.ClickByXpath(driver, referShare_Xpath, "", "", "Click on Share", "", "");
+		fl.entervalueByXpath(driver, emailId_Xpath, emailIds, "", "", "emai ids to be entered", "", "");
+		fl.ClickByXpath(driver, referButton_Xpath, "", "", "click on Refer", "", "");
+		fl.ClickByXpath(driver, doneIndividual_Xpath, "", "", "Click on Done", "", "");
+		
+		
 	}
 	public void CompanyProfile(WebDriver driver, String legalname, String website, String companytype, String business_structure, String contactnum, String duns_no, String industry, String subIndustry, String founded_year,
 			String company_size, String parentcompany, String fbUrl, String twitterUrl, String linkedinUrl, String googleUrl, String currencyType,
@@ -545,8 +802,11 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String industry_Select_CP_Xpath=Environment("industry_Select_CP_Xpath");
 		String industry_SelectOptions_CP_Xpath=Environment("industry_SelectOptions_CP_Xpath");
 		String subIndustryClick_CP_Xpath=Environment("subIndustryClick_CP_Xpath");
+		String industryList__CP_Xpath=Environment("industryList__CP_Xpath");
 		String subIndustryLabelText_CP_Xpath=Environment("subIndustryLabelText_CP_Xpath");
 		String subIndustry_Checkbox_CP_Xpath=Environment("subIndustry_Checkbox_CP_Xpath");
+		String active_subIndustry_Xpath=Environment("active_subIndustry_Xpath");
+		String deactivate_subIndustry_Xpath=Environment("deactivate_subIndustry_Xpath");
 		String foundYear_CP_Xpath=Environment("foundYear_CP_Xpath");
 		String companySize_CP_Xpath=Environment("companySize_CP_Xpath");
 		String parentCompany_CP_XPath=Environment("parentCompany_CP_XPath");
@@ -575,6 +835,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String zipcode_Mail_CP_Xpath=Environment("zipcode_Mail_CP_Xpath");
 		String save_companyInfo_CP_Xpath=Environment("save_companyInfo_CP_Xpath");
 		String cancel_companyInfo_CP_Xpath=Environment("cancel_companyInfo_CP_Xpath");
+		String AlertMessage_Xpath=Environment("AlertMessage_Xpath");
+		String failed_Fields_Xpath=Environment("failed_Fields_Xpath");
 		String contacts_CP_Xpath=Environment("contacts_CP_Xpath");
 		String editcontacts_CP_Xpath=Environment("editcontacts_CP_Xpath");
 		String president_CP_Xpath=Environment("president_CP_Xpath");
@@ -610,8 +872,15 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String description_CP_Xpath=Environment("description_CP_Xpath");
 		String saveDocuments_CP_Xpath=Environment("saveDocuments_CP_Xpath");
 		String cancelDocuments_CP_Xpath=Environment("cancelDocuments_CP_Xpath");
+		String failed_fields_Doc_Xpath=Environment("failed_fields_Doc_Xpath");
 		String companyPublicView_CP_Xpath=Environment("companyPublicView_CP_Xpath");
+		String overview_CPNoFill_Xpath=Environment("overview_CPNoFill_Xpath");
+		String galleryImages_CPValid_Xpath=Environment("galleryImages_CPValid_Xpath");
+		String attribute_CPValid_Xpath=Environment("attribute_CPValid_Xpath");
 		String editCompanyPublicView_CP_Xpath=Environment("editCompanyPublicView_CP_Xpath");
+		String Image1del_CP_Xpath=Environment("Image1del_CP_Xpath");
+		String Image2del_CP_Xpath=Environment("Image2del_CP_Xpath");
+		String Image3del_CP_Xpath=Environment("Image3del_CP_Xpath");
 		String Image1_CP_Xpath=Environment("Image1_CP_Xpath");
 		String Image2_CP_Xpath=Environment("Image2_CP_Xpath");
 		String Image3_CP_Xpath=Environment("Image3_CP_Xpath");
@@ -619,131 +888,938 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String background_CP_Xpath=Environment("background_CP_Xpath");
 		String save_CP_Xpath=Environment("save_CP_Xpath");
 		String cancel_CP_Xpath=Environment("cancel_CP_Xpath");
+		String image1_Failed_Xpath=Environment("image1_Failed_Xpath");
+		String overview_failed_Xpath=Environment("overview_failed_Xpath");
+		
+		
 		JavascriptExecutor jse = (JavascriptExecutor)driver;
+		UploadFile_Robot upload = new UploadFile_Robot();
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
 		/*try
 		{*/
 			fl.JS_Element_Find(driver, Company_LogoXPATH);
 			fl.ClickByXpath(driver, Company_LogoXPATH, "", "Filling company Profile", "click on company logo", "", "");
 			fl.ClickByXpath(driver, companyProfile_Xpath, "", "", "click on company profile", "", "");
+			
 			fl.ClickByXpath(driver, companyInformation_CP_Xpath, "", "", "Click on company Information tab", "", "");
 			fl.ClickByXpath(driver, editcompanyInformation_CP_Xpath, "", "", "Edit Company Information", "", "");
+			if(legalname!="")
+			{
+				fl.ClickByXpath(driver, legalName_CP_Xpath, "", "", "LegalName selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, legalName_CP_Xpath, legalname, "", "", "Legal name Modified", "", "");
+			}
+			if(website!="")
+			{
+				fl.ClickByXpath(driver, website_CP_Xpath, "", "", "Website selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, website_CP_Xpath, website, "", "", "Website Modified", "", "");	
+			}
+			if(companytype!="")
+				fl.selectDropdownByxpath(driver, companyType_Select_CP_Xpath, companytype, "", "", "Selecting Company Type", "", "");
+			if(business_structure!="")
+				fl.selectDropdownByxpath(driver, businessStructure_Select_CP_Xpath, business_structure, "", "", "Selecting business Structure", "", "");
+			if(contactnum!="")
+			{
+				fl.ClickByXpath(driver, contactNo_CP_Xpath, "", "", "ContactNumber selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, contactNo_CP_Xpath, contactnum, "", "", "ContactNumber Modified", "", "");	
+			}
+			if(duns_no!="")
+			{
+				fl.ClickByXpath(driver, dunsNo_CP_Xpath, "", "", "Duns Number selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, dunsNo_CP_Xpath, duns_no, "", "", "Entering the Duns No", "", "");
+			}
+			if(industry!="")
+				fl.selectDropdownByxpath(driver, industry_Select_CP_Xpath, industry, "", "", "Selecting Industry Type", "", "");
+			if(subIndustry!="")
+			{
+				String[] substring =subIndustry.split(",");
+				int subS= substring.length;
+				System.out.println("no of substrings:"+subS);
+				fl.JS_Element_Find(driver, subIndustryClick_CP_Xpath);
+				fl.ClickByXpath(driver, subIndustryClick_CP_Xpath, "", "", "Click on SubIndustry", "", "");
+				List<WebElement> dropList = driver.findElements(By.xpath(industryList__CP_Xpath));
+				int dropListSize = dropList.size();
+				//before going to check , remove already selected options
+				int active=fun_cas.listSize(driver, active_subIndustry_Xpath);
+				System.out.println(active);
+				if(active>=1)
+				{
+					for(int i=1;i<=active;i++)
+					{
+						/*if(i>1)
+						fl.ClickByXpath(driver, subIndustryClick_CP_Xpath, "", "", "Click on SubIndustry", "", "");*/
+						Thread.sleep(3000);
+						fl.JS_Element_Find(driver, active_subIndustry_Xpath+"["+1+"]"+deactivate_subIndustry_Xpath);
+						fl.ClickByXpath(driver, active_subIndustry_Xpath+"["+1+"]"+deactivate_subIndustry_Xpath, "", "", "", "", "");
+						/*fl.ClickByXpath(driver, subIndustryClick_CP_Xpath, "", "", "Click on SubIndustry", "", "");*/
+						
+					}
+				}
+				for(int j=0;j<subS;j++)//if 3 commas in a string it splits into 4
+				{
+					for(int i=1;i<=dropListSize;i++)
+					{
+						String sub_string = substring[j].trim();
+						String text = fl.getTextXPATH(driver, subIndustryLabelText_CP_Xpath+"["+i+"]", "", "", "Compare each item in  Sub Industry list with u mentioned", "", "");
+						if(text.equals(sub_string))
+						{
+							fl.JS_Element_Find(driver, subIndustryLabelText_CP_Xpath+"["+i+"]"+subIndustry_Checkbox_CP_Xpath);
+							fl.ClickByXpath(driver, subIndustryLabelText_CP_Xpath+"["+i+"]"+subIndustry_Checkbox_CP_Xpath, "", "", "SubIndustry selected :"+substring[j], "", "");
+						}
+					}
+				}
+				
+			}
+			if(founded_year!="")
+			{
+				fl.ClickByXpath(driver, foundYear_CP_Xpath, "", "", "found Year field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, foundYear_CP_Xpath, founded_year, "", "", "enter value in Founded year", "", "");
+			}
+			if(company_size!="")
+				fl.selectDropdownByxpath(driver, companySize_CP_Xpath, company_size, "", "", "Select Company Size", "", "");
+			if(parentcompany!="")
+			{
+				fl.ClickByXpath(driver, parentCompany_CP_XPath, "", "", "Parent company field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, parentCompany_CP_XPath, parentcompany, "", "", "Parent Company to be entered", "", "");
+			}
 			
+			if(fbUrl!="")
+			{
+				fl.ClickByXpath(driver, facebookurl_CP_Xpath, "", "", "Parent company field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, facebookurl_CP_Xpath, fbUrl, "", "", "fb url to be entered", "", "");
+			}
 			
-			fl.selectDropdownByxpath(driver, companyType_Select_CP_Xpath, companytype, "", "", "Selecting Company Type", "", "");
-			fl.selectDropdownByxpath(driver, businessStructure_Select_CP_Xpath, business_structure, "", "", "Selecting business Structure", "", "");
+			if(twitterUrl!="")
+			{
+				fl.ClickByXpath(driver, twitterURL_CP_Xpath, "", "", "TwitterUrl field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, twitterURL_CP_Xpath, twitterUrl, "", "", "twitter url to be entered", "", "");
+			}
 			
-			fl.entervalueByXpath(driver, dunsNo_CP_Xpath, duns_no, "", "", "Entering the Duns No", "", "");
-			fl.selectDropdownByxpath(driver, industry_Select_CP_Xpath, industry, "", "", "Selecting Industry Type", "", "");
-			fl.ClickByXpath(driver, subIndustryClick_CP_Xpath, "", "", "Click on SubIndustry", "", "");
-			fl.entervalueByXpath(driver, foundYear_CP_Xpath, founded_year, "", "", "enter value in Founded year", "", "");
-			fl.selectDropdownByxpath(driver, companySize_CP_Xpath, company_size, "", "", "Select Company Size", "", "");
-			fl.entervalueByXpath(driver, parentCompany_CP_XPath, parentcompany, "", "", "Parent Company to be entered", "", "");
-			fl.entervalueByXpath(driver, facebookurl_CP_Xpath, fbUrl, "", "", "fb url to be entered", "", "");
-			fl.entervalueByXpath(driver, twitterURL_CP_Xpath, twitterUrl, "", "", "twitter url to be entered", "", "");
-			fl.entervalueByXpath(driver, linkedinURL_CP_Xpath, linkedinUrl, "", "", "LinkedinUrl to be entered", "", "");
-			fl.entervalueByXpath(driver, googleURL_CP_Xpath, googleUrl, "", "", "Google Url to be entered", "", "");
-			fl.selectDropdownByxpath(driver, currency_Select_CP_Xpath, currencyType, "", "", "Currency type to be selected", "", "");
-			fl.selectDropdownByxpath(driver, yearlyCurrencyType_CP_Xpath, yearly_curType, "", "", "Yearly Currency type to be selected", "", "");
-			fl.entervalueByXpath(driver, yearlynumber_CP_Xpath, year_cur_no, "", "", "Currency Amount To be entered", "", "");
-			fl.selectDropdownByxpath(driver, yearlynumberIn_CP_Xpath, year_curIn, "", "Selecting thousand or lakhs or crores", "", "", "");
-			fl.selectDropdownByxpath(driver, timezone_CP_Xpath, timezone, "", "", "timezone to be selected", "", "");
+			if(linkedinUrl!="")
+			{
+				fl.ClickByXpath(driver, linkedinURL_CP_Xpath, "", "", "LinkedInUrl field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, linkedinURL_CP_Xpath, linkedinUrl, "", "", "LinkedinUrl to be entered", "", "");
+			}
+			
+			if(googleUrl!="")
+			{
+				fl.ClickByXpath(driver, googleURL_CP_Xpath, "", "", "GoogleUrl field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, googleURL_CP_Xpath, googleUrl, "", "", "Google Url to be entered", "", "");
+			}
+			if(currencyType!="")
+				fl.selectDropdownByxpath(driver, currency_Select_CP_Xpath, currencyType, "", "", "Currency type to be selected", "", "");
+			if(yearly_curType!="")
+				fl.selectDropdownByxpath(driver, yearlyCurrencyType_CP_Xpath, yearly_curType, "", "", "Yearly Currency type to be selected", "", "");
+			if(year_cur_no!="")
+			{
+				fl.ClickByXpath(driver, yearlynumber_CP_Xpath, "", "", "YearlyTurnover field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, yearlynumber_CP_Xpath, year_cur_no, "", "", "Currency Amount To be entered", "", "");
+			}
+			if(year_curIn!="")
+				fl.selectDropdownByxpath(driver, yearlynumberIn_CP_Xpath, year_curIn, "", "Selecting thousand or lakhs or crores", "", "", "");
+			if(timezone!="")
+				fl.selectDropdownByxpath(driver, timezone_CP_Xpath, timezone, "", "", "timezone to be selected", "", "");
 			fl.JS_Element_Find(driver, street1_Reg_CP_Xpath);
-			fl.entervalueByXpath(driver, street1_Reg_CP_Xpath, street1Reg, "", "Company Registered Fields to be filled", "street1 to be entered", "", "");
-			fl.entervalueByXpath(driver, street2_Reg_CP_Xpath, street2Reg, "", "", "Street 2 to be entered", "", "");
-			fl.entervalueByXpath(driver, city_Reg_CP_Xpath, cityReg, "", "", "city to be entered", "", "");
-			fl.entervalueByXpath(driver, country_Reg_CP_Xpath, countryReg, "", "", "Country to be entered", "", "");
-			fl.entervalueByXpath(driver, state_Reg_CP_Xpath, stateReg, "", "", "State to be entered", "", "");
-			fl.entervalueByXpath(driver, zipcode_Reg_CP_Xpath, zipReg, "", "", "Zipcode to be entered", "", "");
+			if(street1Reg!="")
+			{
+				fl.ClickByXpath(driver, street1_Reg_CP_Xpath, "", "", "Street1 field selected & cleared", "", "");
+				select_delete sel_del = new select_delete();
+				fl.entervalueByXpath(driver, street1_Reg_CP_Xpath, street1Reg, "", "Company Registered Fields to be filled", "street1 to be entered", "", "");
+			}
+			else
+			{
+				if(street2Reg!="")
+				{
+					fl.ClickByXpath(driver, street2_Reg_CP_Xpath, "", "", "Street1 field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, street2_Reg_CP_Xpath, street2Reg, "", "", "Street 2 to be entered", "", "");
+				}
+				
+				if(cityReg!="")
+				{
+					fl.ClickByXpath(driver, city_Reg_CP_Xpath, "", "", "City field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, city_Reg_CP_Xpath, cityReg, "", "", "city to be entered", "", "");
+				}
+				
+				if(countryReg!="")
+				{
+					fl.ClickByXpath(driver, country_Reg_CP_Xpath, "", "", "Country field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, country_Reg_CP_Xpath, countryReg, "", "", "Country to be entered", "", "");
+				}
+				
+				if(stateReg!="")
+				{
+					fl.ClickByXpath(driver, state_Reg_CP_Xpath, "", "", "State field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, state_Reg_CP_Xpath, stateReg, "", "", "State to be entered", "", "");
+				}
+				
+				if(zipReg!="")
+				{
+					fl.ClickByXpath(driver, zipcode_Reg_CP_Xpath, "", "", "zipcode field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, zipcode_Reg_CP_Xpath, zipReg, "", "", "Zipcode to be entered", "", "");
+				}
+				
+			}
 			if(Mail_AsReg.equals(""))
 			{
 				fl.JS_Element_Find(driver, street1_Mail_CP_Xpath);
-				fl.entervalueByXpath(driver, street1_Mail_CP_Xpath, street1Mail, "", "Mailing Address is different", "enter street1 Mailing address", "", "");
-				fl.entervalueByXpath(driver, street2_Mail_CP_Xpath, street2Mail, "", "", "Street 2 to be entered", "", "");
-				fl.entervalueByXpath(driver, city_Mail_CP_Xpath, cityMail, "", "", "city to be entered", "", "");
-				fl.entervalueByXpath(driver, country_Mail_CP_Xpath, countryMail, "", "", "country to be entered", "", "");
-				fl.entervalueByXpath(driver, state_Mail_CP_Xpath, stateMail, "", "", "State to be entered", "", "");
-				fl.entervalueByXpath(driver, zipcode_Mail_CP_Xpath, zipMail, "", "", "zipcode to be entered", "", "");
+				if(street1Mail!="")
+				{
+					fl.ClickByXpath(driver, street1_Mail_CP_Xpath, "", "", "Street1 field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, street1_Mail_CP_Xpath, street1Mail, "", "Mailing Address is different", "enter street1 Mailing address", "", "");
+				}
+				else
+				{
+					if(street2Mail!="")
+					{
+						fl.ClickByXpath(driver, street2_Mail_CP_Xpath, "", "", "Street2 field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, street2_Mail_CP_Xpath, street2Mail, "", "", "Street 2 to be entered", "", "");
+					}
+					
+					if(cityMail!="")
+					{
+						fl.ClickByXpath(driver, city_Mail_CP_Xpath, "", "", "City field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, city_Mail_CP_Xpath, cityMail, "", "", "city to be entered", "", "");
+					}
+					
+					if(countryMail!="")
+					{
+						fl.ClickByXpath(driver, country_Mail_CP_Xpath, "", "", "Country field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, country_Mail_CP_Xpath, countryMail, "", "", "country to be entered", "", "");
+					}
+					
+					if(stateMail!="")
+					{
+						fl.ClickByXpath(driver, state_Mail_CP_Xpath, "", "", "State field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, state_Mail_CP_Xpath, stateMail, "", "", "State to be entered", "", "");
+					}
+					if(zipMail!="")
+					{
+					fl.ClickByXpath(driver, zipcode_Mail_CP_Xpath, "", "", "Zipcode field selected & cleared", "", "");
+					select_delete sel_del = new select_delete();
+					fl.entervalueByXpath(driver, zipcode_Mail_CP_Xpath, zipMail, "", "", "zipcode to be entered", "", "");
+					}
+				}
 			}
 			else
 			{
+				//WebElement sameAsReg = driver.findElement(By.xpath(street1_Mail_CP_Xpath));
 				fl.JS_Element_Find(driver, sameAsRegistered_CP_Xpath);
-				fl.ClickByXpath(driver, sameAsRegistered_CP_Xpath, "", "Mailing Address is Same As Registered Mail Address", "", "", "");
+				fl.ClickByXpath(driver, sameAsRegistered_CP_Xpath, "", "check checkbox already selected or not", "", "", "");
+				String same = fl.elementDisplayed(driver, street1_Mail_CP_Xpath, "");
+				System.out.println("Same As Registered:"+same);
+				if(same.equals("true"))
+				{
+					fl.ClickByXpath(driver, sameAsRegistered_CP_Xpath, "", "", "Already Selected the checkbox", "", "");
+				}
+				else
+				{
+					fl.disp_Message(driver, "", "", "Mailing Address Selected As Registered Address", "", "");
+				}
+				
 			}
 			fl.JS_Element_Find(driver, save_companyInfo_CP_Xpath);
-			fl.ClickByXpath(driver, save_companyInfo_CP_Xpath, "", "", "", "", "Y");
-			//Contacts
-			fl.JS_Element_Find(driver, contacts_CP_Xpath);
-			fl.ClickByXpath(driver, contacts_CP_Xpath, "", "go to contacts tab", "", "", "Y");
-			fl.ClickByXpath(driver, editcontacts_CP_Xpath, "", "editing contacts", "", "", "");
-			fl.selectDropdownByxpath(driver, president_CP_Xpath, president, "", "", "president to be selected", "", "Y");
-			fl.selectDropdownByxpath(driver, campaignManager_CP_Xpath, campaignManager, "", "", "Campaign Manager to be selected", "", "Y");
-			fl.selectDropdownByxpath(driver, accountManager_CP_Xpath, accountManager, "", "", "Account Manager to be selected", "", "Y");
-			fl.ClickByXpath(driver, saveContacts_CP_Xpath, "", "Save Contacts", "", "", "Y");
-			//Bank Accounts
-			fl.JS_Element_Find(driver, bankAccounts_CP_Xpath);
-			fl.ClickByXpath(driver, bankAccounts_CP_Xpath, "", "go to Bank Accounts Tab", "", "", "Y");
-			fl.ClickByXpath(driver, addBankAccount_CP_Xpath, "", "Adding a bank account", "click on Add ", "", "Y");
-			fl.entervalueByXpath(driver, routingnumber_Bank_CP_Xpath, routingNo, "", "", "Routing Number to be entered", "", "");
-			fl.entervalueByXpath(driver, bankName_Bank_CP_Xpath, bankName, "", "", "bank Name to be entered", "", "");
-			fl.entervalueByXpath(driver, phone_Bank_CP_Xpath, phNo, "", "", "Phone number to be entered", "", "");
-			fl.entervalueByXpath(driver, accountNo_Bank_CP_Xpath, accountNo, "", "", "account number to be enetered", "", "");
-			fl.selectDropdownByxpath(driver, accountType_BAnk_CP_Xpath, accountType, "", "", "Account type to be selected", "", "");
-			fl.entervalueByXpath(driver, street1_Bank_CP_Xpath, street1Bank, "", "Bank Address to be filled", "Street1 to be entered", "", "");
-			fl.entervalueByXpath(driver, street2_Bank_CP_Xpath, street2Bank, "", "", "Street2 to be entered", "", "");
-			fl.entervalueByXpath(driver, city_Bank_CP_Xpath, cityBank, "", "", "city to be entered", "", "");
-			fl.entervalueByXpath(driver, country_Bank_CP_Xpath, countryBank, "", "", "Country to be entered", "", "");
-			fl.entervalueByXpath(driver, state_Bank_CP_Xpath, stateBank, "", "", "State to be entered", "", "");
-			fl.entervalueByXpath(driver, zipcode_Bank_CP_Xpath, zipBank, "", "", "zipcode to be entered", "", "");
-			jse.executeScript("window.scrollBy(0,-250)", "");
-			//fl.JS_Element_Find(driver, saveBank_CP_Xpath);
-			fl.ClickByXpath(driver, saveBank_CP_Xpath, "", "saving bank account details", "", "", "Y");
-			Thread.sleep(3000);
-			//Documents
-			//fl.JS_Element_Find(driver, documents_CP_Xpath);
-			fl.ClickByXpath(driver, documents_CP_Xpath, "", "Go to Documents tab", "", "", "");
-			fl.ClickByXpath(driver, addDocuments_CP_Xpath, "", "Add Documents", "Click on Add", "", "");
-			String doc_Type=fl.checkOptionValueInSelect(driver, documentType_Select_CP_Xpath, documentType_SelectOptions_CP_Xpath, doctype);
-			if(doc_Type.equals("true"))
+			fl.ClickByXpath(driver, save_companyInfo_CP_Xpath, "", "", "Click on Save Button", "", "Y");
+	
+			
+			/*failed_Fields_comInfo= fun_cas.listSize(driver, failed_Fields_Xpath);
+//validation of Company Information
+			if(failed_Fields_comInfo>=1)
 			{
-				fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, doctype, "", "", "Document type to be selected", "", "");
+				fl.disp_MessageFailed(driver, "", "", "ERROR:Mandidatory Fields Are not Filling", "FAILED", "Y");
+			}
+			else
+			{*/
+//======================		
+				alert=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+				System.out.println("alert text is :"+alert);
+				fl.disp_Message(driver, "", "", "Message:"+alert, "", "");
+//====================				
+			/*}
+			//Contacts
+			if(failed_Fields_comInfo==0)
+			{*/
+//=======================				
+				fl.JS_Element_Find(driver, contacts_CP_Xpath);
+				fl.ClickByXpath(driver, contacts_CP_Xpath, "", "go to contacts tab", "", "", "Y");
+				fl.ClickByXpath(driver, editcontacts_CP_Xpath, "", "editing contacts", "", "", "");
+				if(president!="")
+					fl.selectDropdownByxpath(driver, president_CP_Xpath, president, "", "", "president to be selected", "", "Y");
+				if(campaignManager!="")
+					fl.selectDropdownByxpath(driver, campaignManager_CP_Xpath, campaignManager, "", "", "Campaign Manager to be selected", "", "Y");
+				if(accountManager!="")
+					fl.selectDropdownByxpath(driver, accountManager_CP_Xpath, accountManager, "", "", "Account Manager to be selected", "", "Y");
+				fl.ClickByXpath(driver, saveContacts_CP_Xpath, "", "Save Contacts", "", "", "Y");
+//=========================				
+				/*failed_Fields_contacts= fun_cas.listSize(driver, failed_Fields_Xpath);
+				if(failed_Fields_contacts>=1)
+				{
+					fl.disp_MessageFailed(driver, "", "", "ERROR:Mandidatory Fields Are not Filling", "FAILED", "Y");
+				}
+				else
+				{*/
+//========================				
+					alert_contacts=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+					fl.disp_Message(driver, "", "", "Message:"+alert_contacts, "", "");
+//====================					
+				/*}
+				//Bank Accounts
+				if(failed_Fields_contacts==0)
+				{*/
+					fl.JS_Element_Find(driver, bankAccounts_CP_Xpath);
+					fl.ClickByXpath(driver, bankAccounts_CP_Xpath, "", "go to Bank Accounts Tab", "", "", "Y");
+					fl.ClickByXpath(driver, addBankAccount_CP_Xpath, "", "Adding a bank account", "click on Add ", "", "Y");
+					if(routingNo!="")
+					{
+						fl.ClickByXpath(driver, routingnumber_Bank_CP_Xpath, "", "", "RoutingNo field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, routingnumber_Bank_CP_Xpath, routingNo, "", "", "Routing Number to be entered", "", "");
+					}
+					if(bankName!="")
+					{
+						fl.ClickByXpath(driver, bankName_Bank_CP_Xpath, "", "", "BankName field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, bankName_Bank_CP_Xpath, bankName, "", "", "bank Name to be entered", "", "");
+					}
+					if(phNo!="")
+					{
+						fl.ClickByXpath(driver, phone_Bank_CP_Xpath, "", "", "PhnNo field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, phone_Bank_CP_Xpath, phNo, "", "", "Phone number to be entered", "", "");
+					}
+					if(accountNo!="")
+					{
+						fl.ClickByXpath(driver, accountNo_Bank_CP_Xpath, "", "", "Account Number field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, accountNo_Bank_CP_Xpath, accountNo, "", "", "account number to be enetered", "", "");
+					}
+					if(accountType!="")
+						fl.selectDropdownByxpath(driver, accountType_BAnk_CP_Xpath, accountType, "", "", "Account type to be selected", "", "");
+					if(street1Bank!="")
+					{
+						fl.ClickByXpath(driver, street1_Bank_CP_Xpath, "", "", "BankGeo field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, street1_Bank_CP_Xpath, street1Bank, "", "Bank Geo Address to be filled", "Street1 to be entered", "", "");
+					}
+					if(street2Bank!="")
+					{
+						fl.ClickByXpath(driver, street2_Bank_CP_Xpath, "", "", "BankStreet field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, street2_Bank_CP_Xpath, street2Bank, "", "", "Street2 to be entered", "", "");
+					}
+					if(cityBank!="")
+					{
+						fl.ClickByXpath(driver, city_Bank_CP_Xpath, "", "", "BankCity field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, city_Bank_CP_Xpath, cityBank, "", "", "city to be entered", "", "");
+					}
+					if(countryBank!="")
+					{
+						fl.ClickByXpath(driver, country_Bank_CP_Xpath, "", "", "BankCountry field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, country_Bank_CP_Xpath, countryBank, "", "", "Country to be entered", "", "");
+					}
+					if(stateBank!="")
+					{
+						fl.ClickByXpath(driver, state_Bank_CP_Xpath, "", "", "BankCountry field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, state_Bank_CP_Xpath, stateBank, "", "", "State to be entered", "", "");
+					}
+					if(zipBank!="")
+					{
+						fl.ClickByXpath(driver, zipcode_Bank_CP_Xpath, "", "", "BankCountry field selected & cleared", "", "");
+						select_delete sel_del = new select_delete();
+						fl.entervalueByXpath(driver, zipcode_Bank_CP_Xpath, zipBank, "", "", "zipcode to be entered", "", "");
+					}
+					jse.executeScript("window.scrollBy(0,-250)", "");
+					//fl.JS_Element_Find(driver, saveBank_CP_Xpath);
+					fl.ClickByXpath(driver, saveBank_CP_Xpath, "", "saving bank account details", "", "", "Y");
+					Thread.sleep(3000);
+					
+					/*failed_Fields_bank= fun_cas.listSize(driver, failed_Fields_Xpath);
+					if(failed_Fields_bank>=1)
+					{
+						fl.disp_MessageFailed(driver, "", "", "ERROR:Mandidatory Fields Are not Filling", "FAILED", "Y");
+					}
+					else
+					{*/
+						alert_bank=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+						fl.disp_Message(driver, "", "", "Message:"+alert_bank, "", "");
+					/*}
+					//Documents
+					//fl.JS_Element_Find(driver, documents_CP_Xpath);
+					if(failed_Fields_bank==0)
+					{*/
+//============================						
+						Excel_Utils RC = new Excel_Utils(Environment("Excel"));
+						fl.ClickByXpath(driver, documents_CP_Xpath, "", "Go to Documents tab", "", "", "");
+						fl.ClickByXpath(driver, addDocuments_CP_Xpath, "", "Add Documents", "Click on Add", "", "");
+						String Company_Documents=Environment("Sheet_Company_Documents"); 
+						int Company_Documents_col=RC.getLastcolmno(Company_Documents); 
+						String[] Company_Documents_ele=new String[Company_Documents_col]; 
+						for (int Company_Documents_index = 1; Company_Documents_index < RC.getLastrowno(Company_Documents); Company_Documents_index++) 
+						  {
+							if (doctype.equals(RC.getStringCellData(Company_Documents_index, RC.Current_Coulumn_Number(Company_Documents, "DocID"),Company_Documents)))
+								  // Adduser contains company email_id at 1st column  for validation
+							  {
+								document_rows++;
+								for(int Company_Documents_ind=0;Company_Documents_ind<Company_Documents_col;Company_Documents_ind++) 
+								{
+									Company_Documents_ele[Company_Documents_ind]=RC.getStringCellData(Company_Documents_index, Company_Documents_ind, Company_Documents);
+								  System.out.println(Company_Documents_ele[Company_Documents_ind]); //call login as company method, pass array values
+								}
+								
+								if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")]!="")
+								{
+									String doc_Type=fl.checkOptionValueInSelect(driver, documentType_Select_CP_Xpath, documentType_SelectOptions_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")]);
+									if(doc_Type.equals("true"))
+									{
+										fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")], "", "", "Document type to be selected", "", "");
+									}
+									else
+									{
+										fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, "+ Add New", "", "create New Document Type", "Click on Addnew", "", "");
+										fl.entervalueByXpath(driver, documentType_Name_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")], "", "", "document type value to be entered", "", "");
+										fl.entervalueByXpath(driver, documentType_Notes_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentNotes")], "", "", "document Notes to be entered", "", "");
+										fl.ClickByXpath(driver, saveDocType_CP_Xpath, "", "", "Saving the created document type", "", "Y");
+										fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")], "", "", "created document type to be selected", "", "");
+									}
+								}
+								if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_Name")]!="")
+								{
+									fl.ClickByXpath(driver, documentName_CP_Xpath, "", "", "Document Name field selected & cleared", "", "");
+									select_delete sel_del = new select_delete();
+									fl.entervalueByXpath(driver, documentName_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_Name")], "", "", "Document Name to be entered", "", "");
+								}
+								if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_FilePath")]!="")
+								{
+									fl.ClickByXpath(driver, filepath_CP_Xpath, "", "", "flle path to be chosen", "", "");
+									upload.uploadFile(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_FilePath")]);
+								}
+								if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentDescription")]!="")
+								{
+									fl.ClickByXpath(driver, description_CP_Xpath, "", "", "Document Name field selected & cleared", "", "");
+									select_delete sel_del = new select_delete();
+									fl.entervalueByXpath(driver, description_CP_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentDescription")], "", "", "Description to be enetered", "", "");
+								}
+								fl.ClickByXpath(driver, saveDocuments_CP_Xpath, "", "", "save the Added Documents", "", "Y");
+								alert_doc=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+								fl.disp_Message(driver, "", "", "Message:"+alert_doc, "", "");
+							  }
+						  }
+//=============================						
+						/*failed_Fields_doc= fun_cas.listSize(driver, failed_fields_Doc_Xpath);
+						if(failed_Fields_doc>=1)
+						{
+							fl.disp_MessageFailed(driver, "", "", "ERROR:Mandidatory Fields Are not Filling", "FAILED", "Y");
+						}
+						else
+						{
+							alert_doc=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+							fl.disp_Message(driver, "", "", "Message:"+alert_doc, "", "");
+						}
+						//CompanyPublic View
+						//fl.JS_Element_Find(driver, companyPublicView_CP_Xpath);
+						if(failed_Fields_doc==0)
+						{*/
+//=============================						
+							fl.ClickByXpath(driver, companyPublicView_CP_Xpath, "", "go to Company public view", "", "", "");
+							String imag1_status=fun_cas.returnAttributeValue(driver, galleryImages_CPValid_Xpath+"[1]", attribute_CPValid_Xpath);
+							String imag2_status=fun_cas.returnAttributeValue(driver, galleryImages_CPValid_Xpath+"[2]", attribute_CPValid_Xpath);
+							String imag3_status=fun_cas.returnAttributeValue(driver, galleryImages_CPValid_Xpath+"[3]", attribute_CPValid_Xpath);
+							fl.ClickByXpath(driver, editCompanyPublicView_CP_Xpath, "", "", "edit company public view", "", "");
+							if(image1path!="")
+							{
+								if(imag1_status.equals("false"))
+								{
+									fl.ClickByXpath(driver, Image1del_CP_Xpath, "", "", "", "", "");
+									fl.ClickByXpath(driver, Image1_CP_Xpath, "", "", "image1 to be uploaded", "", "");
+									upload.uploadFile(image1path);
+								}
+								else
+								{
+									fl.ClickByXpath(driver, Image1_CP_Xpath, "", "", "image1 to be uploaded", "", "");
+									upload.uploadFile(image1path);
+								}
+							}
+							if(image2path!="")
+							{
+								if(imag2_status.equals("false"))
+								{
+									fl.ClickByXpath(driver, Image2del_CP_Xpath, "", "", "", "", "");
+									fl.ClickByXpath(driver, Image2_CP_Xpath, "", "", "image2 to be uploaded", "", "");
+									upload.uploadFile(image2path);
+								}
+								else
+								{
+									fl.ClickByXpath(driver, Image2_CP_Xpath, "", "", "image2 to be uploaded", "", "");
+									upload.uploadFile(image2path);
+								}
+							}
+							if(image3path!="")
+							{
+								if(imag3_status.equals("false"))
+								{
+									fl.ClickByXpath(driver, Image3del_CP_Xpath, "", "", "", "", "");
+									fl.ClickByXpath(driver, Image3_CP_Xpath, "", "", "image2 to be uploaded", "", "");
+									upload.uploadFile(image3path);
+								}
+								else
+								{
+									fl.ClickByXpath(driver, Image3_CP_Xpath, "", "", "image3 to be uploaded", "", "");
+									upload.uploadFile(image3path);
+								}
+							}
+							if(overview!="")
+							{
+								fl.ClickByXpath(driver, overview_CP_Xpath, "", "", "Overview field selected & cleared", "", "");
+								select_delete sel_del = new select_delete();
+								fl.entervalueByXpath(driver, overview_CP_Xpath, overview, "", "", "overview to be entered", "", "");
+							}
+							if(background!="")
+							{
+								fl.JS_Element_Find(driver, background_CP_Xpath);
+								fl.ClickByXpath(driver, background_CP_Xpath, "", "", "Overview field selected & cleared", "", "");
+								select_delete sel_del = new select_delete();
+								fl.entervalueByXpath(driver, background_CP_Xpath, background, "", "", "background text to be entered", "", "");
+							}
+							fl.JS_Element_Find(driver, save_CP_Xpath);
+							fl.ClickByXpath(driver, save_CP_Xpath, "", "", "saving the Company public view", "", "Y");
+//=================================							
+							/*failed_Fields_pubView1= fun_cas.listSize(driver, image1_Failed_Xpath);
+							failed_Fields_pubView2= fun_cas.listSize(driver, overview_failed_Xpath);
+							failed_Fields_pubView=failed_Fields_pubView1+failed_Fields_pubView2;
+							if(failed_Fields_pubView>=1)
+							{
+								fl.disp_MessageFailed(driver, "", "", "ERROR:Mandidatory Fields Are not Filling", "FAILED", "Y");
+							}
+							else
+							{*/
+//=================================						
+								alert_publicView=fl.getTextXPATH(driver, AlertMessage_Xpath, "", "", "Get Alert Message", "", "");
+								fl.disp_Message(driver, "", "", "Message:"+alert_publicView, "", "");
+//=================================						
+							/*}*/
+						/*}
+					}
+				}
+			}*/
+	}
+	public void companyInfoValidation(WebDriver driver, String legalname, String website, String companytype, String business_structure
+		, String fein, String email, String contactnum, String dunsnum, String businessStruct, String industry, String sub_industry,
+		String found_Year, String comp_siz, String parent_Comp, String fb, String twitter, String linkedIn, String google, String currency,
+		String turnOverNo, String turnOverIn, String street2, String city, String state, String country, String zipcode, String mailingAddress,
+		String mail_street2, String mail_city, String mail_state, String mail_country, String mail_zipcode, String timezone, String president, String campaignManager,
+		String accountManager, String bankname, String routingNo, String accNo, String accType, String phnNo, String bankStreet, String bankCity,
+		String bankCountry, String bankState, String bankZipcode, String docType, String docName, String docDesc, String docStatus,
+		String image1, String image2, String image3, String overview, String background) throws IOException, InterruptedException
+	{
+		String companyInformation_CP_Xpath=Environment("companyInformation_CP_Xpath");
+		String legalName_CPValid_Xpath=Environment("legalName_CPValid_Xpath");
+		String website_CPValid_Xpath=Environment("website_CPValid_Xpath");
+		String companyType_CPValid_Xpath=Environment("companyType_CPValid_Xpath");
+		String fein_CPValid_Xpath=Environment("fein_CPValid_Xpath");
+		String email_CPValid_Xpath=Environment("email_CPValid_Xpath");
+		String contactNo_CPValid_Xpath=Environment("contactNo_CPValid_Xpath");
+		String dunsNo_CPValid_Xpath=Environment("dunsNo_CPValid_Xpath");
+		String businessStruc_CPValid_Xpath=Environment("businessStruc_CPValid_Xpath");
+		String industry_CPValid_Xpath=Environment("industry_CPValid_Xpath");
+		String subindustry_CPValid_Xpath=Environment("subindustry_CPValid_Xpath");
+		String foundYear_CPValid_Xpath=Environment("foundYear_CPValid_Xpath");
+		String companySize_CPValid_Xpath=Environment("companySize_CPValid_Xpath");
+		String parent_CPValid_Xpath=Environment("parent_CPValid_Xpath");
+		String fbURL_CPValid_Xpath=Environment("fbURL_CPValid_Xpath");
+		String twitter_CPValid_Xpath=Environment("twitter_CPValid_Xpath");
+		String linkedIn_CPValid_Xpath=Environment("linkedIn_CPValid_Xpath");
+		String googleURL_CPValid_Xpath=Environment("googleURL_CPValid_Xpath");
+		String currency_CPValid_Xpath=Environment("currency_CPValid_Xpath");
+		String yearlyTurnover_CPValid_Xpath=Environment("yearlyTurnover_CPValid_Xpath");
+		String registerd_CPValid_Xpath=Environment("registerd_CPValid_Xpath");
+		String mailing_CPValid_Xpath=Environment("mailing_CPValid_Xpath");
+		String timezone_CPValid_Xpath=Environment("timezone_CPValid_Xpath");
+		
+		String contacts_CP_Xpath=Environment("contacts_CP_Xpath");
+		String president_CPValid_Xpath=Environment("president_CPValid_Xpath");
+		String campaignManager_CPValid_Xpath=Environment("campaignManager_CPValid_Xpath");
+		String accountManager_CPValid_Xpath=Environment("accountManager_CPValid_Xpath");
+		
+		String bankAccounts_CP_Xpath=Environment("bankAccounts_CP_Xpath");
+		String bankDetails_CPValid_Xpath=Environment("bankDetails_CPValid_Xpath");
+		String allbankNames_Xpath=Environment("allbankNames_Xpath");
+		String bankName_CPValid_Xpath=Environment("bankName_CPValid_Xpath");
+		String routingNo_CPValid_Xpath=Environment("routingNo_CPValid_Xpath");
+		String accNo_CPValid_Xpath=Environment("accNo_CPValid_Xpath");
+		String accType_CPValid_Xpath=Environment("accType_CPValid_Xpath");
+		String phnNo_CPValid_Xpath=Environment("phnNo_CPValid_Xpath");
+		String noBankAdrs_CPValid_Xpath=Environment("noBankAdrs_CPValid_Xpath");
+		String bankAddress_CPValid_Xpath=Environment("bankAddress_CPValid_Xpath");
+		String removeBank_CPValid_Xpath=Environment("removeBank_CPValid_Xpath");
+		String editBank_CPValid_Xpath=Environment("editBank_CPValid_Xpath");
+		
+		String documents_CP_Xpath=Environment("documents_CP_Xpath");
+		String documentRows_CPValid_Xpath=Environment("documentRows_CPValid_Xpath");
+		String docInternalRows_Xpath=Environment("docInternalRows_Xpath");
+		String docType_CPValid_Xpath=Environment("docType_CPValid_Xpath");
+		String docName_CPValid_Xpath=Environment("docName_CPValid_Xpath");
+		String docDesc_CPValid_Xpath=Environment("docDesc_CPValid_Xpath");
+		String status_CPValid_Xpath=Environment("status_CPValid_Xpath");
+		String editDoc_CPValid_Xpath=Environment("editDoc_CPValid_Xpath");
+		String removeDoc_CPValid_Xpath=Environment("removeDoc_CPValid_Xpath");
+		
+		String companyPublicView_CP_Xpath=Environment("companyPublicView_CP_Xpath");
+		String galleryImages_CPValid_Xpath=Environment("galleryImages_CPValid_Xpath");
+		String attribute_CPValid_Xpath=Environment("attribute_CPValid_Xpath");
+		String overview_CPValid_Xpath=Environment("overview_CPValid_Xpath");
+		String background_CPValid_Xpath=Environment("background_CPValid_Xpath");
+		
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
+		/*if(failed_Fields_comInfo==0)
+		{*/
+//=================		
+			fl.ClickByXpath(driver, companyInformation_CP_Xpath, "", "", "Click on company Information tab", "", "");
+			if(legalname!="")
+				fun_cas.getTextValidation(driver, legalName_CPValid_Xpath, legalname);
+			if(website!="")
+				fun_cas.getTextValidation(driver, website_CPValid_Xpath, website);
+			if(companytype!="")
+				fun_cas.getTextValidation(driver, companyType_CPValid_Xpath, companytype);
+			if(fein!="")
+				fun_cas.getTextValidation(driver, fein_CPValid_Xpath, fein);
+			if(email!="")
+				fun_cas.getTextValidation(driver, email_CPValid_Xpath, email);
+			if(contactnum!="")
+			{
+				String con = fl.getTextXPATH(driver, contactNo_CPValid_Xpath, "", "", "Validating :"+contactnum, "", "");
+				String contact=con.replaceAll("[-()]", "");
+				if(contactnum.contains(contact))
+				{
+					fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+				}
+				else
+				{
+					fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+				}
+			}
+			if(dunsnum!="")
+				fun_cas.getTextValidation(driver, dunsNo_CPValid_Xpath, dunsnum);
+			if(businessStruct!="")
+				fun_cas.getTextValidation(driver, businessStruc_CPValid_Xpath, businessStruct);
+			if(industry!="")
+				fun_cas.getTextValidation(driver, industry_CPValid_Xpath, industry);
+			if(sub_industry!="")
+				fun_cas.getTextValidation(driver, subindustry_CPValid_Xpath, sub_industry);
+			if(found_Year!="")
+				fun_cas.getTextValidation(driver, foundYear_CPValid_Xpath, found_Year);
+			if(comp_siz!="")
+				fun_cas.getTextValidation(driver, companySize_CPValid_Xpath, comp_siz);
+			if(parent_Comp!="")
+				fun_cas.getTextValidation(driver, parent_CPValid_Xpath, parent_Comp);
+			if(fb!="")
+				fun_cas.getTextValidation(driver, fbURL_CPValid_Xpath, fb);
+			fl.JS_Element_Find(driver, twitter_CPValid_Xpath);
+			if(twitter!="")
+				fun_cas.getTextValidation(driver, twitter_CPValid_Xpath, twitter);
+			if(linkedIn!="")
+				fun_cas.getTextValidation(driver, linkedIn_CPValid_Xpath, linkedIn);
+			if(google!="")
+				fun_cas.getTextValidation(driver, googleURL_CPValid_Xpath, google);
+			if(currency!="")
+				fun_cas.getTextValidation(driver, currency_CPValid_Xpath, currency);
+			//turnOver=currencyNo+currencyIn
+			if(turnOverNo!="")
+				fun_cas.getTextValidation(driver, yearlyTurnover_CPValid_Xpath, turnOverNo);
+			if(turnOverIn!="")
+				fun_cas.getTextValidation(driver, yearlyTurnover_CPValid_Xpath, turnOverIn);
+			if(street2!="")
+				fun_cas.getTextValidation(driver, registerd_CPValid_Xpath+"["+1+"]", street2);
+			if(city!="")
+				fun_cas.getTextValidation(driver, registerd_CPValid_Xpath+"["+2+"]", city);
+			if(state!="")
+				fun_cas.getTextValidation(driver, registerd_CPValid_Xpath+"["+3+"]", state);
+			if(country!="")
+				fun_cas.getTextValidation(driver, registerd_CPValid_Xpath+"["+4+"]", country);
+			if(zipcode!="")
+				fun_cas.getTextValidation(driver, registerd_CPValid_Xpath+"["+4+"]", zipcode);
+			if(mailingAddress!="")
+			{
+				if(street2!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+1+"]", street2);
+				if(city!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+2+"]", city);
+				if(state!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+3+"]", state);
+				if(country!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+4+"]", country);
+				if(zipcode!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+4+"]", zipcode);
+			
 			}
 			else
 			{
-				fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, "+ Add New", "", "create New Document Type", "Click on Addnew", "", "");
-				fl.entervalueByXpath(driver, documentType_Name_CP_Xpath, doctype, "", "", "document type value to be entered", "", "");
-				fl.entervalueByXpath(driver, documentType_Notes_CP_Xpath, docNotes, "", "", "document Notes to be entered", "", "");
-				fl.ClickByXpath(driver, saveDocType_CP_Xpath, "", "", "Saving the created document type", "", "Y");
-				fl.selectDropdownByxpath(driver, documentType_Select_CP_Xpath, doctype, "", "", "created document type to be selected", "", "");
+				if(mail_street2!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+1+"]", mail_street2);
+				if(mail_city!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+2+"]", mail_city);
+				if(mail_state!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+3+"]", mail_state);
+				if(mail_country!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+4+"]", mail_country);
+				if(mail_zipcode!="")
+					fun_cas.getTextValidation(driver, mailing_CPValid_Xpath+"["+4+"]", mail_zipcode);
 			}
-			fl.entervalueByXpath(driver, documentName_CP_Xpath, docName, "", "", "Document Name to be entered", "", "");
-			fl.ClickByXpath(driver, filepath_CP_Xpath, "", "", "flle path to be chosen", "", "");
-			UploadFile_Robot upload = new UploadFile_Robot();
-			upload.uploadFile(filepath);
-			fl.entervalueByXpath(driver, description_CP_Xpath, description, "", "", "Description to be enetered", "", "");
-			fl.ClickByXpath(driver, saveDocuments_CP_Xpath, "", "", "save the Added Documents", "", "Y");
-			//CompanyPublic View
-			fl.JS_Element_Find(driver, companyPublicView_CP_Xpath);
-			fl.ClickByXpath(driver, companyPublicView_CP_Xpath, "", "go to Company public view", "", "", "");
-			fl.ClickByXpath(driver, editCompanyPublicView_CP_Xpath, "", "", "edit company public view", "", "");
-			fl.ClickByXpath(driver, Image1_CP_Xpath, "", "", "image1 to be uploaded", "", "");
-			upload.uploadFile(image1path);
-			fl.ClickByXpath(driver, Image2_CP_Xpath, "", "", "image2 to be uploaded", "", "");
-			upload.uploadFile(image2path);
-			fl.ClickByXpath(driver, Image3_CP_Xpath, "", "", "image2 to be uploaded", "", "");
-			upload.uploadFile(image3path);
-			fl.entervalueByXpath(driver, overview_CP_Xpath, overview, "", "", "overview to be entered", "", "");
-			fl.entervalueByXpath(driver, background_CP_Xpath, background, "", "", "background text to be entered", "", "");
-			fl.JS_Element_Find(driver, save_CP_Xpath);
-			fl.ClickByXpath(driver, save_CP_Xpath, "", "", "saving the Company public view", "", "Y");
-		/*}
-		catch (WebDriverException e)
-		{
-			fl.disp_Message(driver, "", "Error Occured", "", "", "Y");
-			Logs_DigiSurvey.info(e.getMessage());
-			e.printStackTrace();
+			if(timezone!="")
+				fun_cas.getTextValidation(driver, timezone_CPValid_Xpath, timezone);
+			//CONTACTS
+			if(failed_Fields_contacts==0)
+			{
+				fl.JS_Element_Find(driver, contacts_CP_Xpath);
+				fl.ClickByXpath(driver, contacts_CP_Xpath, "", "go to contacts tab", "", "", "Y");
+				if(president!="")
+					fun_cas.getTextValidation(driver, president_CPValid_Xpath, president);
+				if(campaignManager!="")
+					fun_cas.getTextValidation(driver, campaignManager_CPValid_Xpath, campaignManager);
+				if(accountManager!="")
+					fun_cas.getTextValidation(driver, accountManager_CPValid_Xpath, accountManager);
+//=========================		
+				//BANK ACCOUNTS
+				/*if(failed_Fields_bank==0)
+				{*/
+					fl.ClickByXpath(driver, bankAccounts_CP_Xpath, "", "go to Bank Accounts Tab", "", "", "Y");
+					int number=fun_cas.listSize(driver, bankDetails_CPValid_Xpath);
+					System.out.println(number);
+					for(int i=1;i<=number;i++)
+					{
+						
+						fl.JS_Element_Find(driver, bankDetails_CPValid_Xpath+"["+i+"]"+allbankNames_Xpath);
+						String bankName_text=fl.getTextXPATH(driver, bankDetails_CPValid_Xpath+"["+i+"]"+allbankNames_Xpath, "", "", "", "", "");
+						System.out.println(bankName_text);
+						System.out.println(bankname);
+						if(bankName_text.contains(bankname))
+						{
+							Thread.sleep(3000);
+							if(bankname!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankName_CPValid_Xpath, bankname);
+							if(routingNo!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+routingNo_CPValid_Xpath, routingNo);
+							if(accNo!="")
+							{
+								String acc = fl.getTextXPATH(driver, bankDetails_CPValid_Xpath+"["+i+"]"+accNo_CPValid_Xpath, "", "", "Validating :"+accNo, "", "");
+								String acc_no=acc.substring(accNo.length()-4);
+								System.out.println("Account number last 4 digits:"+acc_no);
+								if(accNo.contains(acc_no))
+								{
+									fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+								}
+								else
+								{
+									fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+								}
+							}
+							if(accType!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+accType_CPValid_Xpath, accType);
+							if(phnNo!="")
+							{
+								String con = fl.getTextXPATH(driver, bankDetails_CPValid_Xpath+"["+i+"]"+phnNo_CPValid_Xpath, "", "", "Validating :"+phnNo, "", "");
+								String contact=con.replaceAll("[-()]", "");
+								if(phnNo.contains(contact))
+								{
+									fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+								}
+								else
+								{
+									fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+								}
+							}
+							if(bankStreet!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankAddress_CPValid_Xpath+"[1]", bankStreet);
+							if(bankCity!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankAddress_CPValid_Xpath+"[2]", bankCity);
+							if(bankState!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankAddress_CPValid_Xpath+"[3]", bankState);
+							if(bankCountry!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankAddress_CPValid_Xpath+"[4]", bankCountry);
+							if(bankZipcode!="")
+								fun_cas.getTextValidation(driver, bankDetails_CPValid_Xpath+"["+i+"]"+bankAddress_CPValid_Xpath+"[4]", bankZipcode);
+							break;
+						}
+						else
+						{
+							if(i>number)
+							{
+								fl.disp_MessageFailed(driver, "", "", "No bank is Existing with this details", "", "Y");
+							}
+						}
+					}
+					
+					
+					//DOCUMENTS
+					/*if(failed_Fields_doc==0)
+					{*/
+//============================================						
+						fl.JS_Element_Find(driver, documents_CP_Xpath);
+						fl.ClickByXpath(driver, documents_CP_Xpath, "", "Go to Documents tab", "", "", "");
+						int docRows =fun_cas.listSize(driver, documentRows_CPValid_Xpath);
+						int addedDoc=document_rows;
+						Excel_Utils RC = new Excel_Utils(Environment("Excel"));
+						String Company_Documents=Environment("Sheet_Company_Documents"); 
+						int Company_Documents_col=RC.getLastcolmno(Company_Documents); 
+						String[] Company_Documents_ele=new String[Company_Documents_col]; 
+						for (int Company_Documents_index = 1; Company_Documents_index < RC.getLastrowno(Company_Documents); Company_Documents_index++) 
+						  {
+							if (docType.equals(RC.getStringCellData(Company_Documents_index, RC.Current_Coulumn_Number(Company_Documents, "DocID"),Company_Documents)))
+								  // Adduser contains company email_id at 1st column  for validation
+							  {
+								//document_rows++;
+								for(int Company_Documents_ind=0;Company_Documents_ind<Company_Documents_col;Company_Documents_ind++) 
+								{
+									Company_Documents_ele[Company_Documents_ind]=RC.getStringCellData(Company_Documents_index, Company_Documents_ind, Company_Documents);
+									System.out.println(Company_Documents_ele[Company_Documents_ind]); //call login as company method, pass array values
+								}
+								for(int i=1;i<=docRows;i++)
+								{
+									fl.JS_Element_Find(driver, documentRows_CPValid_Xpath+"["+i+"]"+docType_CPValid_Xpath);
+									String doc_Type=fl.getTextXPATH(driver, documentRows_CPValid_Xpath+"["+i+"]"+docType_CPValid_Xpath, "", "", "get the doc type ", "", "");
+									if(doc_Type.equals(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")]))
+									{
+										//int internalRows=fun_cas.listSize(driver, documentRows_CPValid_Xpath+"["+i+"]"+docInternalRows_Xpath);
+										if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")]!="")
+											fun_cas.getTextValidation(driver, documentRows_CPValid_Xpath+"["+i+"]"+docType_CPValid_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentType")]);
+										if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_Name")]!="")
+											fun_cas.getTextValidation(driver, documentRows_CPValid_Xpath+"["+i+"]"+docName_CPValid_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "Document_Name")]);
+										if(Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentDescription")]!="")
+											fun_cas.getTextValidation(driver, documentRows_CPValid_Xpath+"["+i+"]"+docDesc_CPValid_Xpath, Company_Documents_ele[RC.Current_Coulumn_Number(Company_Documents, "DocumentDescription")]);
+										if(docStatus!="")
+											fun_cas.getTextValidation(driver, documentRows_CPValid_Xpath+"["+i+"]"+status_CPValid_Xpath, docStatus);
+									}
+								}
+							  }
+						  }
+//==================================						
+						
+						//COMPANY PUBLIC VIEW
+						/*if(failed_Fields_pubView==0)
+						{*/
+//===========================					
+							fl.JS_Element_Find(driver, companyPublicView_CP_Xpath);
+							fl.ClickByXpath(driver, companyPublicView_CP_Xpath, "", "go to Company public view", "", "", "");
+							if(image1!="")
+								fun_cas.attributeValue(driver, galleryImages_CPValid_Xpath+"[1]", attribute_CPValid_Xpath, image1);
+							if(image2!="")
+								fun_cas.attributeValue(driver, galleryImages_CPValid_Xpath+"[2]", attribute_CPValid_Xpath, image2);
+							if(image3!="")
+								fun_cas.attributeValue(driver, galleryImages_CPValid_Xpath+"[3]", attribute_CPValid_Xpath, image3);
+							if(overview!="")
+								fun_cas.getTextValidation(driver, overview_CPValid_Xpath, overview);
+							if(background!="")
+								fun_cas.getTextValidation(driver, background_CPValid_Xpath, background);
+//=======================================							
+							}
+					/*}
+				}
+			}
 		}*/
 	}
-	public void myProfile(WebDriver driver, String name, String contact, String street1, String street2, String city,
+	public void attributeValue(WebDriver driver, String xpath, String attribute, String value) throws InterruptedException
+	{
+		WebElement element = driver.findElement(By.xpath(xpath));
+		String ima1 = element.getAttribute(attribute);
+		System.out.println("Attribute value:"+ima1);
+		for (int i = 0 ; i<value.length() ; i++)
+		{
+	        if (value.charAt(i) == '.')
+	        {
+	        	System.out.println(i);
+	        	String subString=value.substring(i, value.length());
+	        	System.out.println(subString);
+	        	
+	        	String str3 = value.replaceAll(subString, "");
+	        	System.out.println("removing.jpg:"+str3);
+	        	int k=str3.length();
+	        	System.out.println(k);
+	        	String[] arr=str3.split("\\\\");
+	        	System.out.println(arr.length);
+	        	System.out.println(arr[arr.length-1]);
+	        	String excel=arr[arr.length-1];
+	        	if(ima1.contains(excel))
+	        	{
+	        		fl.disp_Message(driver, "", "", "image uploaded succesfully", "", "");
+	        	}
+	        	else
+	        	{
+	        		fl.disp_Message(driver, "", "", "image upload failed", "", "Y");
+	        	}
+	        	break;
+	        }
+		}
+	}
+	public String returnAttributeValue(WebDriver driver, String xpath, String attribute)
+	{
+		WebElement element = driver.findElement(By.xpath(xpath));
+		String ima1 = element.getAttribute(attribute);
+		if(ima1.contains("/Assets/Images/"))
+		{
+			return "true";
+		}
+		else
+		{
+			return "false";
+		}
+	}
+	public int listSize(WebDriver driver, String xpath)
+	{
+		List<WebElement> elements = driver.findElements(By.xpath(xpath));
+		int i=elements.size();
+		return i;
+	}
+	public void getTextValidation(WebDriver driver, String xpath, String text) throws InterruptedException
+	{
+		String legal = fl.getTextXPATH(driver, xpath, "", "", "Validating :"+text, "", "");
+		int length_web=legal.length();
+		int length_excel=text.length();
+		if(length_web>=length_excel)
+		{
+			if(legal.contains(text))
+			{
+				fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+			}
+			else
+			{
+				fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+			}
+		}
+		else
+		{
+			if(text.contains(legal))
+			{
+				fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+			}
+			else
+			{
+				fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+			}
+		}
+	}
+	public void myProfile(WebDriver driver, String name, String contact, String occupation, String visaStatus, String birthDate, String salarySel,
+			String salary_val, String street1, String street2, String city,
 			String country, String state, String zipcode, String timezone) throws InterruptedException, IOException
 	{
 		Functional_Cases_propread fun_case = new Functional_Cases_propread();
@@ -752,6 +1828,14 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String edit_MP_Xpath=Environment("edit_MP_Xpath");
 		String name_MP_Xpath=Environment("name_MP_Xpath");
 		String contact_MP_Xpath=Environment("contact_MP_Xpath");
+		String occupation_MP_Xpath=Environment("occupation_MP_Xpath");
+		String occupationOptions_MP_Xpath=Environment("occupationOptions_MP_Xpath");
+		String visa_MP_Xpath=Environment("visa_MP_Xpath");
+		String visaOptions_MP_Xpath=Environment("visaOptions_MP_Xpath");
+		String birth_month_MP_Xpath=Environment("birth_month_MP_Xpath");
+		String salary_MP_Xpath=Environment("salary_MP_Xpath");
+		String salaryOptions_MP_Xpath=Environment("salaryOptions_MP_Xpath");
+		String salaryNo_MP_Xpath=Environment("salaryNo_MP_Xpath");
 		String street1_MP_Xpath=Environment("street1_MP_Xpath");
 		String street2_MP_Xpath=Environment("street2_MP_Xpath");
 		String city_MP_Xpath=Environment("city_MP_Xpath");
@@ -763,28 +1847,173 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String update_MP_Xpath=Environment("update_MP_Xpath");
 		String cancel_MP_Xpath=Environment("cancel_MP_Xpath");
 		
+		fl.JS_Element_Find(driver, Company_LogoXPATH);
 		fl.ClickByXpath(driver, Company_LogoXPATH, "", "Filling Myprofile", "Click on company Logo", "", "");
 		fl.ClickByXpath(driver, myProfile_Company_Xpath, "", "", "Click on My Profile", "", "");
 		fl.ClickByXpath(driver, edit_MP_Xpath, "", "", "Click on Edit", "", "Y");
-		fun_case.clearTextfield(driver, name_MP_Xpath, name);
-		fl.entervalueByXpath(driver, name_MP_Xpath, name, "", "", "enter name", "", "");
-		fun_case.clearTextfield(driver, contact_MP_Xpath, contact);
-		fl.entervalueByXpath(driver, contact_MP_Xpath, contact, "", "", "enter contact no", "", "");
-		fun_case.clearTextfield(driver, street1_MP_Xpath, street1);
-		fl.entervalueByXpath(driver, street1_MP_Xpath, street1, "", "", "enter street1", "", "");
-		fun_case.clearTextfield(driver, street2_MP_Xpath, street2);
-		fl.entervalueByXpath(driver, street2_MP_Xpath, street2, "", "", "enter street1", "", "");
-		fun_case.clearTextfield(driver, city_MP_Xpath, city);
-		fl.entervalueByXpath(driver, city_MP_Xpath, city, "", "", "enter city", "", "");
-		fun_case.clearTextfield(driver, country_MP_Xpath, country);
-		fl.entervalueByXpath(driver, country_MP_Xpath, country, "", "", "enter country", "", "");
-		fun_case.clearTextfield(driver, state_MP_Xpath, state);
-		fl.entervalueByXpath(driver, state_MP_Xpath, state, "", "", "enter state", "", "");
-		fun_case.clearTextfield(driver, zipcode_MP_Xpath, zipcode);
-		fl.entervalueByXpath(driver, zipcode_MP_Xpath, zipcode, "", "", "enter zipcode", "", "");
-		fun_case.clearTextfield(driver, timezone_SelectMP_Xpath, timezone);
-		fl.selectDropdownByxpath(driver, timezone_SelectMP_Xpath, timezone, "", "", "", "", "");
+		if(name!="")
+		{
+			fun_case.clearTextfield(driver, name_MP_Xpath, name);
+			fl.entervalueByXpath(driver, name_MP_Xpath, name, "", "", "enter name", "", "");
+		}
+		if(contact!="")
+		{
+			fun_case.clearTextfield(driver, contact_MP_Xpath, contact);
+			fl.entervalueByXpath(driver, contact_MP_Xpath, contact, "", "", "enter contact no", "", "");
+		}
+		if(occupation!="")
+		{
+			String occ=fl.checkOptionValueInSelect(driver, occupation_MP_Xpath, occupationOptions_MP_Xpath, occupation);
+			if(occ.equals("true"))
+			{
+				fl.selectDropdownByxpath(driver, occupation_MP_Xpath, occupation, "", "", "Selecting existed element", "", "");
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Mentioned item not existed in Dropdown", "", "");
+			}
+		}
+		if(visaStatus!="")
+		{
+			String visa=fl.checkOptionValueInSelect(driver, visa_MP_Xpath, visaOptions_MP_Xpath, visaStatus);
+			if(visa.equals("true"))
+			{
+				fl.selectDropdownByxpath(driver, visa_MP_Xpath, visaStatus, "", "", "Selecting existed element", "", "");
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Mentioned item not existed in Dropdown", "", "");
+			}
+		}
+		if(birthDate!="")
+		{
+			fun_case.clearTextfield(driver, birth_month_MP_Xpath, birthDate);
+			fl.entervalueByXpath(driver, birth_month_MP_Xpath, birthDate, "", "", "enter birthDate", "", "");
+		}
+		if(salarySel!="")
+		{
+			String salary_sel=fl.checkOptionValueInSelect(driver, salary_MP_Xpath, salaryOptions_MP_Xpath, salarySel);
+			if(salary_sel.equals("true"))
+			{
+				fl.selectDropdownByxpath(driver, salary_MP_Xpath, salarySel, "", "", "Selecting Salary Type", "", "");
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Mentioned item not existed in Dropdown", "", "");
+			}
+		}
+		if(salary_val!="")
+		{
+			fun_case.clearTextfield(driver, salaryNo_MP_Xpath, salary_val);
+			fl.entervalueByXpath(driver, salaryNo_MP_Xpath, salary_val, "", "", "enter Salary Value", "", "");
+		}
+		if(timezone!="")
+		{
+			fun_case.clearTextfield(driver, timezone_SelectMP_Xpath, timezone);
+			fl.selectDropdownByxpath(driver, timezone_SelectMP_Xpath, timezone, "", "", "", "", "");
+		}
+		if(street1!="")
+		{
+			fun_case.clearTextfield(driver, street1_MP_Xpath, street1);
+			fl.entervalueByXpath(driver, street1_MP_Xpath, street1, "", "", "enter street1", "", "");
+		}
+		if(street2!="")
+		{
+			fun_case.clearTextfield(driver, street2_MP_Xpath, street2);
+			fl.entervalueByXpath(driver, street2_MP_Xpath, street2, "", "", "enter street1", "", "");
+		}
+		if(city!="")
+		{
+			fun_case.clearTextfield(driver, city_MP_Xpath, city);
+			fl.JS_Element_Find(driver, city_MP_Xpath);
+			fl.entervalueByXpath(driver, city_MP_Xpath, city, "", "", "enter city", "", "");
+		}
+		if(country!="")
+		{
+			fun_case.clearTextfield(driver, country_MP_Xpath, country);
+			fl.entervalueByXpath(driver, country_MP_Xpath, country, "", "", "enter country", "", "");
+		}
+		if(state!="")
+		{
+			fun_case.clearTextfield(driver, state_MP_Xpath, state);
+			fl.entervalueByXpath(driver, state_MP_Xpath, state, "", "", "enter state", "", "");
+		}
+		if(zipcode!="")
+		{
+			fun_case.clearTextfield(driver, zipcode_MP_Xpath, zipcode);
+			fl.entervalueByXpath(driver, zipcode_MP_Xpath, zipcode, "", "", "enter zipcode", "", "");
+		}
+		
 		fl.ClickByXpath(driver, update_MP_Xpath, "", "", "click on Update", "", "Y");
+	}
+	public void myProfile_Validation(WebDriver driver, String name, String contact, String occupation, String visaStatus, String birthDate, String salarySel,
+			String salary_val, String street1, String street2, String city,
+			String country, String state, String zipcode, String timezone) throws InterruptedException, IOException
+	{
+			Functional_Cases_propread fun_cas= new Functional_Cases_propread();
+			String name_MPV_Xpath=Environment("name_MPV_Xpath");
+			//String empID_MPV_Xpath=Environment("empID_MPV_Xpath");
+			String email_MPV_Xpath=Environment("email_MPV_Xpath");
+			String contact_MPV_Xpath=Environment("contact_MPV_Xpath");
+			String designation_MPV_Xpath=Environment("designation_MPV_Xpath");
+			String role_MPV_Xpath=Environment("role_MPV_Xpath");
+			String occupation_MPV_Xpath=Environment("occupation_MPV_Xpath");
+			String visa_MPV_Xpath=Environment("visa_MPV_Xpath");
+			String salary_MPV_Xpath=Environment("salary_MPV_Xpath");
+			String birthMY_MPV_Xpath=Environment("birthMY_MPV_Xpath");
+			String status_MPV_Xpath=Environment("status_MPV_Xpath");
+			String street_MPV_Xpath=Environment("street_MPV_Xpath");
+			String city_MPV_Xpath=Environment("city_MPV_Xpath");
+			String state_MPV_Xpath=Environment("state_MPV_Xpath");
+			String countryPin_MPV_Xpath=Environment("countryPin_MPV_Xpath");
+			String timezone_MPV_Xpath=Environment("timezone_MPV_Xpath");
+				
+			if(name!="")
+				fun_cas.getTextValidation(driver, name_MPV_Xpath, name);
+			if(contact!="")
+				fun_cas.getTextValidation(driver, contact_MPV_Xpath, contact);
+			if(occupation!="")
+				fun_cas.getTextValidation(driver, occupation_MPV_Xpath, occupation);
+			if(visaStatus!="")
+				fun_cas.getTextValidation(driver, visa_MPV_Xpath, visaStatus);
+			if(salarySel!="")
+			{
+				if(salarySel=="AUD"||salarySel=="CAD"||salarySel=="USD")
+				fun_cas.getTextValidation(driver, salary_MPV_Xpath, "$");
+				if(salarySel=="GBP")
+					fun_cas.getTextValidation(driver, salary_MPV_Xpath, "£");
+				else
+					if(salarySel=="INR")
+					fl.disp_Message(driver, "", "", "Indian Currency Type", "", "");
+			}
+			if(salary_val!="")
+				fun_cas.getTextValidation(driver, salary_MPV_Xpath, salary_val);
+			if(birthDate!="")
+			{
+				String sal = fl.getTextXPATH(driver, birthMY_MPV_Xpath, "", "", "Validating :"+birthDate, "", "");
+				String sal_val=sal.replaceAll("/", "");
+				if(sal_val.contains(birthDate))
+				{
+					fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+				}
+				else
+				{
+					fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+				}
+			}
+			
+			if(street2!="")
+				fun_cas.getTextValidation(driver, street_MPV_Xpath, street2);
+			if(city!="")
+				fun_cas.getTextValidation(driver, city_MPV_Xpath, city);
+			if(state!="")
+				fun_cas.getTextValidation(driver, state_MPV_Xpath, state);
+			if(country!="")
+				fun_cas.getTextValidation(driver, countryPin_MPV_Xpath, country);
+			if(zipcode!="")
+				fun_cas.getTextValidation(driver, countryPin_MPV_Xpath, zipcode);
+			if(timezone!="")
+				fun_cas.getTextValidation(driver, timezone_MPV_Xpath, timezone);
 	}
 	public void clearTextfield(WebDriver driver, String Xpath, String value) throws IOException, InterruptedException
 	{
@@ -811,7 +2040,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		
 	}
-	public void candidateRegistration(WebDriver driver, String firstname, String lastname, String emailid, String contactnumber, String password,
+	public void candidateRegistration(WebDriver driver, int first, String firstname, String lastname, String emailid, String contactnumber, String password,
 			String confirmpassword, String captcha) throws IOException, InterruptedException, ClassNotFoundException, SQLException 
 	{
 		String Company_Baseurl=Environment("Comapany_BaseURL_Digi");
@@ -825,13 +2054,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String CaptchaIndivial_Xpath=Environment("CaptchaIndivial_Xpath");
 		String AgreeIndividual_Xpath=Environment("AgreeIndividual_Xpath");
 		String RegisterIndividual_Xpath=Environment("RegisterIndividual_Xpath");
-		
+		String verifyTextIndividual_Xpath=Environment("verifyTextIndividual_Xpath");
+		String verifyIndividual_Xpath=Environment("verifyIndividual_Xpath");
 
 		try {
-			fl.invokeApplication(driver, Company_Baseurl, "", "Invoke Application", "", "", "", "");
-			
-			fl.ClickByXpath(driver, Signup_Xpath, "", "Click on Signup", "", "", "");
-			
+			if(first==1)
+			{
+				fl.invokeApplication(driver, Company_Baseurl, "", "Invoke Application", "", "", "", "");
+				fl.ClickByXpath(driver, Signup_Xpath, "", "Click on Signup", "", "", "");
+			}
+			else
+			{
+				String referURL=excelRW.readExcel(Environment("refer_Excel"), 1);
+				fl.invokeApplication(driver, referURL, "", "Invoke Application", "", "", "", "");
+			}
 			fl.entervalueByXpath(driver, FirstNameIndividual_Xpath, firstname, "enter firstname", "", "", "", "");
 			
 			fl.entervalueByXpath(driver, LastNameIndividual_Xpath, lastname, "enter lastname", "", "", "", "");
@@ -844,20 +2080,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			
 			fl.entervalueByXpath(driver, ConfirmPasswordIndividual_Xpath, confirmpassword, "re-enter password", "", "", "", "");
 			
-			fl.entervalueByXpath(driver, CaptchaIndivial_Xpath, captcha, "enter captcha", "", "", "", "");
-			
+			fl.ClickByXpath(driver, CaptchaIndivial_Xpath, "", "enter captcha", "", "", "");
+			Thread.sleep(10000);
 			fl.ClickByXpath(driver, AgreeIndividual_Xpath, "", "Accept Terms & Conditions", "", "", "");
 			
 			fl.ClickByXpath(driver, RegisterIndividual_Xpath, "", "click on Register", "", "", "");
 
-			/*String Verify_Code_Candit = DB_Connection_Digi_Candit.Db_Connect(S3);
+			String Verify_Code_Candit = DB_Connection_Digi_Candit.Db_Connect(emailid);
 			System.out.println(Verify_Code_Candit);
 
-			fl.entervalueByXpath(driver, Environment("Verififcation_textboxXPATH"), Verify_Code_Candit, "", "", "",
+			fl.entervalueByXpath(driver, verifyTextIndividual_Xpath, Verify_Code_Candit, "", "", "",
 					"", "");
 
-			fl.ClickByXpath(driver, Environment("verify_click"), "", "", "", "", "");
-			Thread.sleep(10000);*/
+			fl.ClickByXpath(driver, verifyIndividual_Xpath, "", "", "", "", "");
+			Thread.sleep(10000);
 
 		} 
 		catch (WebDriverException e) 
@@ -979,7 +2215,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		}
 
 	}
-	public void companyRegistration(WebDriver driver, String yourname, String orgname, String orgemailid, String contno, String fein, String website,
+	public void companyRegistration(WebDriver driver, int first, String yourname, String orgname, String orgemailid, String contno, String fein, String website,
 			String password, String confirmpassword, String captcha) throws IOException, InterruptedException
 			
 	{
@@ -997,15 +2233,25 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String CaptchOrg_xpath=Environment("CaptchOrg_xpath");
 		String AgreeOrg_Xpath=Environment("AgreeOrg_Xpath");
 		String RegisterOrg_Xpath=Environment("RegisterOrg_Xpath");
+		String verifyCodeOrg_Xpath=Environment("verifyCodeOrg_Xpath");
+		String verifyOrg_Xpath=Environment("verifyOrg_Xpath");
 		JavascriptExecutor jse = (JavascriptExecutor)driver;
 
 		try 
 		{
 			
+			if(first==1)
+			{
+				fl.invokeApplication(driver, Company_Baseurl, "", "Invoke Application Url", "", "", "", "");
+				fl.ClickByXpath(driver, Signup_Xpath, "", "click on Signup ", "", "", "");
+			}
+			else
+			{
+				String companyReferUrl=excelRW.readExcel(Environment("refer_Excel"), 1);
+				fl.invokeApplication(driver, companyReferUrl, "", "Invoke Application Url", "", "", "", "");
+			}
 
-			fl.invokeApplication(driver, Company_Baseurl, "", "Invoke Application Url", "", "", "", "");
 
-			fl.ClickByXpath(driver, Signup_Xpath, "", "click on Signup ", "", "", "");
 
 			fl.ClickByXpath(driver, Organization_Xpath, "", "Click on Organization", "", "", "");
 
@@ -1027,15 +2273,19 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 
 			fl.entervalueByXpath(driver, ConfirmPasswordOrg_Xpath, confirmpassword, "re-enter password", "", "", "", "");
 
+			Thread.sleep(10000);
 			fl.entervalueByXpath(driver, CaptchOrg_xpath, captcha, "enter captcha", "", "", "", "");
-
+			
+			
 			fl.ClickByXpath(driver, AgreeOrg_Xpath, "", "Accept Terms & Conditions", "", "", "");
 
 			// Thread.sleep(3000);
-			jse.executeScript("window.scrollBy(0,1000)", "");
+			fl.JS_Element_Find(driver, RegisterOrg_Xpath);
 			fl.ClickByXpath(driver, RegisterOrg_Xpath, "", "Click on Register", "", "", "");
 			
-
+			String code = DB_Connection_Digi_Company.Db_Connect(fein);
+			fl.entervalueByXpath(driver, verifyCodeOrg_Xpath, code, "", "", "Verification code to be entered", "", "");
+			fl.ClickByXpath(driver, verifyOrg_Xpath, "", "", "click on Verify", "", "");
 		} 
 		catch (Exception e) 
 		{
@@ -1159,12 +2409,18 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		}
 		
 	}
-	public void AddUsers_inCompany(WebDriver driver, String S1, String S2, String S3, String S4, String S5, String S6, String S7, String S8, String S9, String S10, String S11, String S12, String S13, String S14, String S15, String S16) throws IOException, InterruptedException 
+	public String AddUsers_inCompany(WebDriver driver, String name, String empID, String email, String contact, String designation, String role, 
+			String parentRole, String reportManager, String hrManager, String street1, String street2, String city, String country,
+			String state, String zipcode, String filepath, String description) throws IOException, InterruptedException 
 	{
 		
 		System.out.println("creating users");
 		String Setup_Xpath=Environment("Setup_Xpath");
+		String mainMenuList_Xpath=Environment("mainMenuList_Xpath");
 		String SetupUsers_Xapth=Environment("SetupUsers_Xapth");
+		String Setup_DBiA_Xpath=Environment("Setup_DBiA_Xpath");
+		String SetupUsers_DBiA_Xapth=Environment("SetupUsers_DBiA_Xapth");
+		String goback_NewUser_Xpath=Environment("goback_NewUser_Xpath");
 		String advancedSearch_NewUser_Xpath=Environment("advancedSearch_NewUser_Xpath");
 		String username_NewUser_Xpath=Environment("username_NewUser_Xpath");
 		String noUsers_NewUser_Xpath=Environment("noUsers_NewUser_Xpath");
@@ -1194,94 +2450,225 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String State_Select_Xapth=Environment("State_Select_Xapth");
 		String Zipcode_Xpath=Environment("Zipcode_Xpath");
 		String Filepath_Xpath=Environment("Filepath_Xpath");
+		String Notes_Xpath=Environment("Notes_Xpath");
 		String save_NewUser_Xpath=Environment("save_NewUser_Xpath");
-		
+		JavascriptExecutor jse = (JavascriptExecutor)driver;
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
 		try 
 		{
-			fl.JS_Element_Find(driver, Setup_Xpath);
-			fl.ClickByXpath(driver, Setup_Xpath, "", "Setup Menu", "", "", "");
+			
+			String url = driver.getCurrentUrl();
+			if(!url.contains("/CreateNewUser"))
+			{
+				fl.JS_Element_Find(driver, Setup_Xpath);
+				//jse.executeScript("window.scrollBy(0,-450)", "");
+				Thread.sleep(3000);
+				
+				int mainList=fun_cas.listSize(driver, mainMenuList_Xpath);
+				if(mainList==6)
+				{
+					fl.ClickByXpath(driver, Setup_DBiA_Xpath, "", "", "Setup Menu", "", "");
+					fl.ClickByXpath(driver, SetupUsers_DBiA_Xapth, "", "Click on Users", "", "", "");
+				}
+				else
+				{
+					fl.ClickByXpath(driver, Setup_Xpath, "", "Setup Menu", "", "", "");
 
-			fl.ClickByXpath(driver, SetupUsers_Xapth, "", "Click on Users", "", "", "");
+					fl.ClickByXpath(driver, SetupUsers_Xapth, "", "Click on Users", "", "", "");
+				}
+			}
+			else
+			{
+				fl.ClickByXpath(driver, goback_NewUser_Xpath, "", "", "Click on Go Back", "", "");
+			}
 					
 			fl.ClickByXpath(driver, advancedSearch_NewUser_Xpath, "", "Search for user before going to create", "", "", "");
-					
-			fl.entervalueByXpath(driver, username_NewUser_Xpath, S1, "", "", "", "", "");
+			if(name!="")	
+			fl.entervalueByXpath(driver, username_NewUser_Xpath, name, "", "", "", "", "");
 					
 			String noUsers=fl.getTextXPATH(driver, noUsers_NewUser_Xpath, "", "", "", "", "");
 			if(noUsers.contains("No"))
 			{
 				fl.ClickByXpath(driver, New_User_Xapth, "", "Click on New User", "", "", "");
 
-				fl.entervalueByXpath(driver, Name_NewUser_Xapth, S1, "fill Name field", "", "", "", "");
-
-				fl.entervalueByXpath(driver, EmployeeID_NewUser_Xapth, S2, "fill EmployeeID field", "", "", "", "");
-				
-				fl.entervalueByXpath(driver, Email_NewUser_Xapth, S3, "fill Email Field", "", "", "", "");
-
-				fl.entervalueByXpath(driver, Contact_NewUser_Xapth, S4, "fill Contact Field", "", "", "", "");
-
-				String Designation = fl.checkOptionValueInSelect(driver, designation_NewUser_SelectXapth, designation_NewUser_SelectOptionsXapth ,S5);
-					
-				if(Designation.equals("true"))
+				if(name!="")
+				fl.entervalueByXpath(driver, Name_NewUser_Xapth, name, "fill Name field", "", "", "", "");
+				if(empID!="")
+				fl.entervalueByXpath(driver, EmployeeID_NewUser_Xapth, empID, "fill EmployeeID field", "", "", "", "");
+				if(email!="")
+				fl.entervalueByXpath(driver, Email_NewUser_Xapth, email, "fill Email Field", "", "", "", "");
+				if(contact!="")
+				fl.entervalueByXpath(driver, Contact_NewUser_Xapth, contact, "fill Contact Field", "", "", "", "");
+				if(designation!="")
 				{
-					fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, S5, "select dropdown item", "", "", "", "");
+					String Designation = fl.checkOptionValueInSelect(driver, designation_NewUser_SelectXapth, designation_NewUser_SelectOptionsXapth ,designation);
+					
+					if(Designation.equals("true"))
+					{
+						fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, designation, "select dropdown item", "", "", "", "");
+					}
+					else
+					{
+						fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, "+ Add New", "Designation need to create", "", "", "", "");
+					
+						fl.entervalueByXpath(driver, NewDesignation_Xpath, designation, "enter value in New Designation", "", "", "", "");
+						
+						fl.ClickByXpath(driver, AdddesignationButton_Xpath, "", "Click on AddDesignation Button", "", "", "");
+						
+						fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, designation, "Selecting created Dropdown element", "", "", "", "");
+						
+					}
 				}
-				else
+				if(role!="")
 				{
-					fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, "+ Add New", "Designation need to create", "", "", "", "");
+					String Role = fl.checkOptionValueInSelect(driver, Role_Select_Xapth, Role_SelectOption_Xapth ,role);
 					
-					fl.entervalueByXpath(driver, NewDesignation_Xpath, S5, "enter value in New Designation", "", "", "", "");
+					if(Role.equals("true"))
+					{
+						fl.selectDropdownByxpath(driver, Role_Select_Xapth, role, "Selecting Role", "", "", "", "");
+					}
+					else
+					{
+						fl.selectDropdownByxpath(driver, Role_Select_Xapth, "+ Add New", "Need to create a new Role", "", "", "", "");
 						
-					fl.ClickByXpath(driver, AdddesignationButton_Xpath, "", "Click on AddDesignation Button", "", "", "");
+						fl.entervalueByXpath(driver, RoleName_Xpath, role, "Enter Role", "", "", "", "");
 						
-					fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, S5, "Selecting created Dropdown element", "", "", "", "");
+						fl.selectDropdownByxpath(driver, ParentRole_SelectXpath, parentRole, "Select Parent Role", "", "", "", "");
+					
+						fl.ClickByXpath(driver, AddRole_Xpath, "", "Click on AddRole", "", "", "");
 						
+						fl.selectDropdownByxpath(driver, Role_Select_Xapth, role, "", "", "Selecting created Role", "", "");
+					}
 				}
-					
-				String Role = fl.checkOptionValueInSelect(driver, Role_Select_Xapth, Role_SelectOption_Xapth ,S6);
-					
-				if(Role.equals("true"))
+				if(street1!="")
+				fl.entervalueByXpath(driver, Street1_Xpath, street1, "", "Stree1 Field to be filled", "", "", "");
+				if(street2!="")	
+				fl.entervalueByXpath(driver, Street2_Xpath, street2, "", "", "Stree1 Field to be filled", "", "");
+				if(city!="")	
+				fl.entervalueByXpath(driver, City_Xapth, city, "City Field to be filled", "", "", "", "");
+				if(country!="")
+				fl.entervalueByXpath(driver, Country_Select_Xpath, country, "Country field to be filled", "", "", "", "");
+				if(state!="")
+				fl.entervalueByXpath(driver, State_Select_Xapth, state, "State Field to be selected", "", "", "", "");
+				if(zipcode!="")
+				fl.entervalueByXpath(driver, Zipcode_Xpath, zipcode, "Zipcode to be entered", "", "", "", "");
+				if(filepath!="")
 				{
-					fl.selectDropdownByxpath(driver, Role_Select_Xapth, S6, "Selecting Role", "", "", "", "");
+					fl.ClickByXpath(driver, Filepath_Xpath, "", "choose file to upload the file", "", "", "");
+					
+					UR.uploadFile(filepath);
 				}
-				else
-				{
-					fl.selectDropdownByxpath(driver, Role_Select_Xapth, "+ Add New", "Need to create a new Role", "", "", "", "");
-						
-					fl.entervalueByXpath(driver, RoleName_Xpath, S6, "Enter Role", "", "", "", "");
-						
-					fl.selectDropdownByxpath(driver, ParentRole_SelectXpath, S7, "Select Parent Role", "", "", "", "");
-						
-					fl.ClickByXpath(driver, AddRole_Xpath, "", "Click on AddRole", "", "", "");
-						
-					fl.selectDropdownByxpath(driver, Role_Select_Xapth, S6, "", "", "Selecting created Role", "", "");
-				}
-
-				fl.entervalueByXpath(driver, Street1_Xpath, S10, "", "Stree1 Field to be filled", "", "", "");
-					
-				fl.entervalueByXpath(driver, Street2_Xpath, S11, "", "", "Stree1 Field to be filled", "", "");
-
-				fl.entervalueByXpath(driver, City_Xapth, S12, "City Field to be filled", "", "", "", "");
-
-				fl.entervalueByXpath(driver, Country_Select_Xpath, S13, "Country field to be filled", "", "", "", "");
-
-				fl.entervalueByXpath(driver, State_Select_Xapth, S14, "State Field to be selected", "", "", "", "");
-
-				fl.entervalueByXpath(driver, Zipcode_Xpath, S15, "Zipcode to be entered", "", "", "", "");
-					
-				fl.ClickByXpath(driver, Filepath_Xpath, "", "choose file to upload the file", "", "", "");
-					
-				UR.uploadFile(S16);
-
+				if(description!="")
+				fl.entervalueByXpath(driver, Notes_Xpath, description, "", "", "enter desription", "", "");
 				fl.JS_Element_Find(driver, save_NewUser_Xpath);
 				fl.ClickByXpath(driver, save_NewUser_Xpath, "", "save Created User", "", "", "Y");
 				System.out.println("user details saved");
 				Thread.sleep(1000);
+				return "true";
 			}
 			else
 			{
-				fl.disp_Message(driver, "", "Already Existed Username", "", "", "Y");
+				//fl.disp_Message(driver, "", "Already Existed Username", "", "", "Y");
+				String moreButtons_AUV_Xpath=Environment("moreButtons_AUV_Xpath");
+				String row_NewUser_Xpath=Environment("row_NewUser_Xpath");
+				String user_NewUser_Xpath=Environment("user_NewUser_Xpath");
+				int more = fun_cas.listSize(driver, moreButtons_AUV_Xpath);
+				int exist=0;
+				for(int i=1;i<=more;i++)
+				{
+					String userN=fl.getTextXPATH(driver, row_NewUser_Xpath+"["+i+"]"+user_NewUser_Xpath, "", "", "check user existed or not", "", "");
+					if(userN.equals(name))
+					{
+						exist++;
+						
+					}
+				}
+				if(exist==1)
+					fl.disp_Message(driver, "", "Already Existed Username", "", "", "Y");
+				else
+				{
+					fl.ClickByXpath(driver, New_User_Xapth, "", "Click on New User", "", "", "");
+
+					if(name!="")
+					fl.entervalueByXpath(driver, Name_NewUser_Xapth, name, "fill Name field", "", "", "", "");
+					if(empID!="")
+					fl.entervalueByXpath(driver, EmployeeID_NewUser_Xapth, empID, "fill EmployeeID field", "", "", "", "");
+					if(email!="")
+					fl.entervalueByXpath(driver, Email_NewUser_Xapth, email, "fill Email Field", "", "", "", "");
+					if(contact!="")
+					fl.entervalueByXpath(driver, Contact_NewUser_Xapth, contact, "fill Contact Field", "", "", "", "");
+					if(designation!="")
+					{
+						String Designation = fl.checkOptionValueInSelect(driver, designation_NewUser_SelectXapth, designation_NewUser_SelectOptionsXapth ,designation);
+						
+						if(Designation.equals("true"))
+						{
+							fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, designation, "select dropdown item", "", "", "", "");
+						}
+						else
+						{
+							fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, "+ Add New", "Designation need to create", "", "", "", "");
+						
+							fl.entervalueByXpath(driver, NewDesignation_Xpath, designation, "enter value in New Designation", "", "", "", "");
+							
+							fl.ClickByXpath(driver, AdddesignationButton_Xpath, "", "Click on AddDesignation Button", "", "", "");
+							
+							fl.selectDropdownByxpath(driver, designation_NewUser_SelectXapth, designation, "Selecting created Dropdown element", "", "", "", "");
+							
+						}
+					}
+					if(role!="")
+					{
+						String Role = fl.checkOptionValueInSelect(driver, Role_Select_Xapth, Role_SelectOption_Xapth ,role);
+						
+						if(Role.equals("true"))
+						{
+							fl.selectDropdownByxpath(driver, Role_Select_Xapth, role, "Selecting Role", "", "", "", "");
+						}
+						else
+						{
+							fl.selectDropdownByxpath(driver, Role_Select_Xapth, "+ Add New", "Need to create a new Role", "", "", "", "");
+							
+							fl.entervalueByXpath(driver, RoleName_Xpath, role, "Enter Role", "", "", "", "");
+							
+							fl.selectDropdownByxpath(driver, ParentRole_SelectXpath, parentRole, "Select Parent Role", "", "", "", "");
+						
+							fl.ClickByXpath(driver, AddRole_Xpath, "", "Click on AddRole", "", "", "");
+							
+							fl.selectDropdownByxpath(driver, Role_Select_Xapth, role, "", "", "Selecting created Role", "", "");
+						}
+					}
+					if(street1!="")
+					fl.entervalueByXpath(driver, Street1_Xpath, street1, "", "Stree1 Field to be filled", "", "", "");
+					if(street2!="")	
+					fl.entervalueByXpath(driver, Street2_Xpath, street2, "", "", "Stree1 Field to be filled", "", "");
+					if(city!="")	
+					fl.entervalueByXpath(driver, City_Xapth, city, "City Field to be filled", "", "", "", "");
+					if(country!="")
+					fl.entervalueByXpath(driver, Country_Select_Xpath, country, "Country field to be filled", "", "", "", "");
+					if(state!="")
+					fl.entervalueByXpath(driver, State_Select_Xapth, state, "State Field to be selected", "", "", "", "");
+					if(zipcode!="")
+					fl.entervalueByXpath(driver, Zipcode_Xpath, zipcode, "Zipcode to be entered", "", "", "", "");
+					if(filepath!="")
+					{
+						fl.ClickByXpath(driver, Filepath_Xpath, "", "choose file to upload the file", "", "", "");
+						
+						UR.uploadFile(filepath);
+					}
+					if(description!="")
+					fl.entervalueByXpath(driver, Notes_Xpath, description, "", "", "enter desription", "", "");
+					fl.JS_Element_Find(driver, save_NewUser_Xpath);
+					fl.ClickByXpath(driver, save_NewUser_Xpath, "", "save Created User", "", "", "Y");
+					System.out.println("user details saved");
+					Thread.sleep(1000);
+					return "true";
+				}
+					
+					
+				
 			}
+			
 		}
 		catch (WebDriverException e) 
 		{
@@ -1289,7 +2676,81 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			Logs_DigiSurvey.info(e.getMessage());
 			e.printStackTrace();
 		}
-
+		return "false";
+	}
+	public void AddUsers_inCompanyValidation(WebDriver driver, String name, String empID, String email, String contact, String designation, String role, 
+			String parentRole, String reportManager, String hrManager, String street1, String street2, String city, String country,
+			String state, String zipcode, String filepath, String description) throws IOException, InterruptedException 
+	{
+		Functional_Cases_propread fun_cas  = new Functional_Cases_propread();
+		String goback_NewUser_Xpath=Environment("goback_NewUser_Xpath");
+		String advancedSearch_AUV_Xpath=Environment("advancedSearch_AUV_Xpath");
+		String username_AUV_Xpath=Environment("username_AUV_Xpath");
+		String moreButtons_AUV_Xpath=Environment("moreButtons_AUV_Xpath");
+		String view_AUV_Xpath=Environment("view_AUV_Xpath");
+		String Name_AUV_Xpath=Environment("Name_AUV_Xpath");
+		String empID_AUV_Xpath=Environment("empID_AUV_Xpath");
+		String emailID_AUV_Xpath=Environment("emailID_AUV_Xpath");
+		String contact_AUV_Xpath=Environment("contact_AUV_Xpath");
+		String role_AUV_Xpath=Environment("role_AUV_Xpath");
+		String designation_AUV_Xpath=Environment("designation_AUV_Xpath");
+		String street1_AUV_Xpath=Environment("street1_AUV_Xpath");
+		String street2_AUV_Xpath=Environment("street2_AUV_Xpath");
+		String city_AUV_Xpath=Environment("city_AUV_Xpath");
+		String state_AUV_Xpath=Environment("state_AUV_Xpath");
+		String country_AUV_Xpath=Environment("country_AUV_Xpath");
+		String zipcode_AUV_Xpath=Environment("zipcode_AUV_Xpath");
+		String note_AUV_Xpath=Environment("note_AUV_Xpath");
+		String close_AUV_Xpath=Environment("close_AUV_Xpath");
+		
+		fl.ClickByXpath(driver, goback_NewUser_Xpath, "", "AddUser Validation", "", "", "");
+		fl.ClickByXpath(driver, advancedSearch_AUV_Xpath, "", "", "Click on Advanced Search", "", "");
+		fl.entervalueByXpath(driver, username_AUV_Xpath, name, "", "", "filter with:"+name, "", "");
+		fl.ClickByXpath(driver, moreButtons_AUV_Xpath, "", "", "click more options", "", "");
+		fl.ClickByXpath(driver, moreButtons_AUV_Xpath, "", "", "click more options", "", "");
+		fl.ClickByXpath(driver, view_AUV_Xpath, "", "", "Click on View Option", "", "");
+		
+		if(name!="")
+			fun_cas.getTextValidation(driver, username_AUV_Xpath, name);
+		if(empID!="")
+			fun_cas.getTextValidation(driver, empID_AUV_Xpath, empID);
+		if(email!="")
+			fun_cas.getTextValidation(driver, emailID_AUV_Xpath, email);
+		if(contact!="")
+		{
+			//fun_cas.getTextValidation(driver, contact_AUV_Xpath, contact);
+			String con = fl.getTextXPATH(driver, contact_AUV_Xpath, "", "", "Validating :"+contact, "", "");
+			String cont=con.replaceAll("[()-]", "");
+			if(contact.contains(cont))
+			{
+				fl.disp_Message(driver, "", "", "field validation succesful", "", "");
+			}
+			else
+			{
+				fl.disp_MessageFailed(driver, "", "", "Field validation fail", "", "Y");
+			}
+		}
+		if(role!="")
+			fun_cas.getTextValidation(driver, role_AUV_Xpath, role);
+		if(designation!="")
+			fun_cas.getTextValidation(driver, designation_AUV_Xpath, designation);
+		if(street1!="")
+			fun_cas.getTextValidation(driver, street1_AUV_Xpath, street1);
+		if(street2!="")
+			fun_cas.getTextValidation(driver, street2_AUV_Xpath, street2);
+		if(city!="")
+			fun_cas.getTextValidation(driver, city_AUV_Xpath, city);
+		if(state!="")
+			fun_cas.getTextValidation(driver, state_AUV_Xpath, state);
+		if(country!="")
+			fun_cas.getTextValidation(driver, country_AUV_Xpath, country);
+		if(zipcode!="")
+			fun_cas.getTextValidation(driver, zipcode_AUV_Xpath, zipcode);
+		if(zipcode!="")
+			fun_cas.getTextValidation(driver, zipcode_AUV_Xpath, zipcode);
+		if(description!="")
+			fun_cas.getTextValidation(driver, note_AUV_Xpath, description);
+		fl.ClickByXpath(driver, close_AUV_Xpath, "", "", "Close the popup of userDetailView", "", "");
 	}
 	public void create_survey_Categeory(WebDriver driver, String new_or_existedName, String UpdatedName, String Notes ) throws IOException
 	{
@@ -1573,8 +3034,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			String TemplateName, String Que_Control) throws IOException, InterruptedException
 	{
 		Functional_Cases_propread func_case = new Functional_Cases_propread();
-		String CreateSurvey_Questions=Environment("CreateSurvey_Questions");
 		
+		String CreateSurvey_Questions=Environment("CreateSurvey_Questions");
 		String Survey_Xpath=Environment("Survey_Xpath");
 		String createSurvey_Xpath=Environment("createSurvey_Xpath");
 		String SurveyCategeory_Xpath=Environment("SurveyCategeory_Xpath");
@@ -1628,12 +3089,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 				
 			}
 			
-			//=======Mentioned SurveyGroup existed or not==========
-			//start=========================================
-			/*fl.ClickByXpath(driver, Survey_Xpath, "", "", "", "", "");
 			
-			fl.ClickByXpath(driver, createSurvey_Xpath, "", "", "", "", "");*/
-			//end=========================================
 			String check_SurveyGroupOPtion= fl.checkOptionValueInSelect(driver, SurveyGroupName_Xpath, SurveyGroupNameOptions_Xpath, SurveyGroupName);
 			
 			System.out.println(check_SurveyGroupOPtion);
@@ -1658,11 +3114,16 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 				
 				/*Assert.fail("Mentioned SurveyGroup Not Existed");*/
 			}
-			//start=========================================
-			/*fl.ClickByXpath(driver, Survey_Xpath, "", "", "", "", "");
-			
-			fl.ClickByXpath(driver, createSurvey_Xpath, "", "", "", "", "");*/
-			//end=========================================
+			if(TemplateName!="")
+			{
+				String exist=func_case.checkTemplateList(driver, TemplateName);
+				if(exist.equals("true"))
+				{
+					fl.disp_Message(driver, "", "", "Templatename Already Existed", "", "");
+					Assert.fail();
+				}
+				
+			}
 			
 			fl.selectDropdownByxpath(driver, SurveyCategeory_Xpath, SurveyCategeoryName, "", "selected the SurveyCategeory"+SurveyCategeoryName, "", "", "");
 			
@@ -1705,6 +3166,125 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		}*/
 		
 		
+	}
+	public String checkTemplateList(WebDriver driver, String template) throws IOException, InterruptedException
+	{
+		String templates_CS_Xpath=Environment("templates_CS_Xpath");
+		String select_CS_Xpath=Environment("select_CS_Xpath");
+		String selectOptions_CS_Xpath=Environment("selectOptions_CS_Xpath");
+		String Done_CS_Xpath=Environment("Done_CS_Xpath");
+		String cancel_CS_Xpath=Environment("cancel_CS_Xpath");
+		
+		fl.ClickByXpath(driver, templates_CS_Xpath, "", "", "", "", "");
+		String status=fl.checkOptionValueInSelect(driver, select_CS_Xpath, selectOptions_CS_Xpath, template);
+		if(status.equals("true"))
+		{
+			fl.selectDropdownByxpath(driver, select_CS_Xpath, select_CS_Xpath, "", "", "Selecting Template", "", "Y");
+			/*fl.ClickByXpath(driver, Done_CS_Xpath, "", "", "Click Done to add questions to create survey", "", "");*/
+			return "true";
+		}
+		else
+		{
+			fl.ClickByXpath(driver, cancel_CS_Xpath, "", "", "close the templates list start creating survey", "", "");
+			return "false";
+		}
+	}
+	public void checkSurveyTemplates(WebDriver driver, String template) throws IOException, InterruptedException
+	{
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
+		String Survey_Xpath=Environment("Survey_Xpath");
+		String survey_SurveyTemplates_Xpath=Environment("survey_SurveyTemplates_Xpath");
+		String AdvancedSearch_CreatedSurvey_Xpath=Environment("AdvancedSearch_CreatedSurvey_Xpath");
+		String compareTemplate_ACS_Xpath=Environment("compareTemplate_ACS_Xpath");
+		
+		String moreuttons_ACS_Xpath=Environment("moreuttons_ACS_Xpath");
+		String edit_ACS_Xpath=Environment("edit_ACS_Xpath");
+		String view_ACS_Xpath=Environment("view_ACS_Xpath");
+		String delete_ACS_Xpath=Environment("delete_ACS_Xpath");
+		
+		fl.JS_Element_Find(driver, Survey_Xpath);
+		fl.ClickByXpath(driver, Survey_Xpath, "", "", "Go to survey Menu", "", "");
+		fl.ClickByXpath(driver, survey_SurveyTemplates_Xpath, "", "", "Click on SurveyTemplates", "", "");
+		fl.ClickByXpath(driver, AdvancedSearch_CreatedSurvey_Xpath, "", "", "click on Advanced Search", "", "");
+		fl.entervalueByXpath(driver, compareTemplate_ACS_Xpath, template, "", "", "Templatename with which u have created survey", "", "");
+		
+		int temp_exist=0;
+		fun_cas.listSize(driver, moreuttons_ACS_Xpath,template,compareTemplate_ACS_Xpath);
+		/*if(more>1)
+		{
+			for(int i=1;i<=more;i++)
+			{
+				String temp_name = fl.getTextXPATH(driver, compareTemplate_ACS_Xpath+"["+i+"]", "", "", "get text of templatename", "", "");
+				if(temp_name.equals(template))
+				{
+					temp_exist++;
+				}
+			}
+		}
+		else
+		{
+			if(more==1)
+			{
+				String temp_name = fl.getTextXPATH(driver, compareTemplate_ACS_Xpath+"["+1+"]", "", "", "get text of templatename", "", "");
+				if(temp_name.equals(template))
+				{
+					temp_exist++;
+				}
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Template you searched with is not existed", "", "");
+			}
+		}
+		if(temp_exist==1)
+		{
+			fl.disp_Message(driver, "", "", "Template created while creating survey saved succesfully", "", "");
+		}
+		else
+		{
+			fl.disp_Message(driver, "", "", "Template you searched with not existed", "", "");
+		}*/
+	}
+	public void listSize(WebDriver driver, String morexpath, String name, String Compare_Xpath) throws InterruptedException
+	{
+		List<WebElement> mores = driver.findElements(By.xpath(morexpath));
+		int size = mores.size();
+		int temp_exist=0;
+		//return size;
+		if(size>1)
+		{
+			for(int i=1;i<=size;i++)
+			{
+				String temp_name = fl.getTextXPATH(driver, Compare_Xpath+"["+i+"]", "", "", "get text of templatename", "", "");
+				if(temp_name.equals(name))
+				{
+					temp_exist++;
+				}
+			}
+		}
+		else
+		{
+			if(size==1)
+			{
+				String temp_name = fl.getTextXPATH(driver, Compare_Xpath+"["+1+"]", "", "", "get text of templatename", "", "");
+				if(temp_name.equals(name))
+				{
+					temp_exist++;
+				}
+			}
+			else
+			{
+				fl.disp_Message(driver, "", "", "Template you searched with is not existed", "", "");
+			}
+		}
+		if(temp_exist==1)
+		{
+			fl.disp_Message(driver, "", "", "Template created while creating saved succesfully", "", "");
+		}
+		else
+		{
+			fl.disp_Message(driver, "", "", "Template you searched with not existed", "", "");
+		}
 	}
 	public void validatePublishedSurveyData(WebDriver driver, String categeoryname, String GroupName,
 			String surveyname, String description, int No_Of_Que) throws IOException, InterruptedException
@@ -1765,7 +3345,11 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			
 			//===after complete validation click on back button
 			
-			fl.ClickByXpath(driver, BackButton_Xpath, "", "", "", "", "");
+			//fl.ClickByXpath(driver, BackButton_Xpath, "", "", "", "", "");
+			fl.JS_Element_Find(driver, Survey_Xpath);
+			fl.ClickByXpath(driver, Survey_Xpath, "", "Go Back to Survey Menu", "", "", "");
+			
+			fl.ClickByXpath(driver, survey_Surveys_Xpath, "", "Click on Surveys", "", "", "");
 			
 		/*} 
 		catch (Exception e) 
@@ -1782,6 +3366,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 	{
 		String Survey_Xpath=Environment("Survey_Xpath");
 		String survey_Surveys_Xpath=Environment("survey_Surveys_Xpath");
+		String AdvancedSearch_CreatedSurvey_Xpath=Environment("AdvancedSearch_CreatedSurvey_Xpath");
 		String searchCreatedSurevey_Xpath=Environment("searchCreatedSurevey_Xpath");
 		String MoreOPtionsonGrid_Xpath=Environment("MoreOPtionsonGrid_Xpath");
 		String viewonGrid_Xapth=Environment("viewonGrid_Xapth");
@@ -1792,9 +3377,12 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		try 
 		{
+			fl.JS_Element_Find(driver, Survey_Xpath);
 			fl.ClickByXpath(driver, Survey_Xpath, "", "", "", "", "");
 			
 			fl.ClickByXpath(driver, survey_Surveys_Xpath, "", "", "", "", "");
+			
+			fl.ClickByXpath(driver, AdvancedSearch_CreatedSurvey_Xpath, "", "Click On Advanced Search", "", "", "");
 			
 			fl.entervalueByXpath(driver, searchCreatedSurevey_Xpath, surveyname, "", "", "", "", "");
 			
@@ -2276,6 +3864,19 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		return question;
 	}
+	public String viewSurvey_GetQueText(WebDriver driver, int queNo) throws IOException
+	{
+		String queText_CSV_Xpath=Environment("queText_CSV_Xpath");
+		String QueTotalText_Quiz_Xpath=Environment("QueTotalText_Quiz_Xpath");
+		String QueNo_Remove_Quiz_Xpath=Environment("QueNo_Remove_Quiz_Xpath");
+		String extraText ="\n";
+		
+		fl.JS_Element_Find(driver, queText_CSV_Xpath+"["+queNo+"]");
+		String question = fl.getTextXPATH(driver, queText_CSV_Xpath+"["+queNo+"]", "", "", "", "", "");
+		
+		
+		return question;
+	}
 	public String updateSurveyName(WebDriver driver,String SearchWithSurveyName,String UpdatedSurveyCategeoryName, String UpdatedSurveyCategeoryNotes,String UpdatedSurveyGroupName
 			, String UpdatedSurveyGroupNotes, String UpdatedSurveyGroupSubNotes, String UpdatedSurveyName, String UpdatedDescription,
 			String AddQue) throws IOException, InterruptedException
@@ -2725,6 +4326,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 									fl.entervalueByXpath(driver, NumberofOPtions_3_Text_Xpath, option3, "option3 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 									
@@ -2741,6 +4344,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 									fl.entervalueByXpath(driver, NumberofOPtions_3_Text_Xpath, option3, "option3 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 							
@@ -2760,10 +4365,14 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
 							
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
+									
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_6_Text_Xpath, option6, "option6 value is entered", "", "", "", "");
 							
+									fl.JS_Element_Find(driver, NumberofOPtions_7_Text_Xpath);
+									
 									fl.entervalueByXpath(driver, NumberofOPtions_7_Text_Xpath, option7, "option7 value is entered", "", "", "", "");
 									
 									jse.executeScript("window.scrollBy(0,500)", "");
@@ -2780,12 +4389,16 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
 							
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
+									
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_6_Text_Xpath, option6, "option6 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_7_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_7_Text_Xpath, option7, "option7 value is entered", "", "", "", "");
-							
+									
 									fl.entervalueByXpath(driver, NumberofOPtions_8_Text_Xpath, option8, "option8 value is entered", "", "", "", "");
 									
 									jse.executeScript("window.scrollBy(0,500)", "");
@@ -2801,14 +4414,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 									fl.entervalueByXpath(driver, NumberofOPtions_3_Text_Xpath, option3, "option3 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_6_Text_Xpath, option6, "option6 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_7_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_7_Text_Xpath, option7, "option7 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_8_Text_Xpath, option8, "option8 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_9_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_9_Text_Xpath, option9, "option9 value is entered", "", "", "", "");
 									
@@ -2825,14 +4444,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 									fl.entervalueByXpath(driver, NumberofOPtions_3_Text_Xpath, option3, "option3 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_4_Text_Xpath, option4, "option4 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_5_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_5_Text_Xpath, option5, "option5 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_6_Text_Xpath, option6, "option6 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_7_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_7_Text_Xpath, option7, "option7 value is entered", "", "", "", "");
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_8_Text_Xpath, option8, "option8 value is entered", "", "", "", "");
+									
+									fl.JS_Element_Find(driver, NumberofOPtions_9_Text_Xpath);
 							
 									fl.entervalueByXpath(driver, NumberofOPtions_9_Text_Xpath, option9, "option9 value is entered", "", "", "", "");
 							
@@ -2889,14 +4514,14 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		}*/
 		
 	}
-	public void AddQuestionto_UpdateSurvey(WebDriver driver, String QuestionText, String QuestionTag, String AnswerType,
+	/*public void AddQuestionto_UpdateSurvey(WebDriver driver, String QuestionText, String QuestionTag, String AnswerType,
 			String NoofOptions_OR_Text, int Question_No, String option1, String option2, String option3, String option4, 
 			String option5, String option6, String option7, String option8, String option9, String option10) throws IOException
 	{
-		/*QuestionText="Q1";
+		QuestionText="Q1";
 		QuestionTag="Q_Tag1";
 		AnswerType="Check Box";
-		NoofOptions_OR_Text="2";*/
+		NoofOptions_OR_Text="2";
 		
 		
 		String QuestionUpdateText_Xpath=Environment("QuestionUpdateText_Xpath");
@@ -2939,10 +4564,10 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			JavascriptExecutor jse = (JavascriptExecutor) driver;
 			
 			
-			/*if(fl.findByXpath(driver, Question_Xpath+"["+Question_No+"]").getText().equals(QuestionText))
+			if(fl.findByXpath(driver, Question_Xpath+"["+Question_No+"]").getText().equals(QuestionText))
 			{
 				System.out.println("question preview matches the text you entered in que field");
-			}*/
+			}
 			//jse.executeScript("window.scrollBy(0,1000)", "");
 			fl.entervalueByXpath(driver, QuestionTag_Xpath, QuestionTag, "", "", "", "", "");
 			
@@ -3181,7 +4806,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			e.printStackTrace();
 		}
 		
-	}
+	}*/
 	public int createdque(WebDriver driver) throws IOException
 	{
 		String NoofCreatedQue=Environment("NoofCreatedQue");
@@ -3315,6 +4940,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			e.printStackTrace();
 		}
 	}
+	
 	public void share_survey(WebDriver driver,String SurveyName, String EmailIDs, int noOfshares) throws IOException, InterruptedException
 	{
 		String Survey_Xpath = Environment("Survey_Xpath");
@@ -3849,7 +5475,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		
 	}
-	public void answer_basedonQueType(WebDriver driver, int que_no,String queID, String que_type, String SurveyName) throws IOException, InterruptedException
+	public void answer_basedonQueType(WebDriver driver, int que_no, String que_type) throws IOException, InterruptedException
 	{
 		//String que_type=null;
 		  Excel_Utils RC = new Excel_Utils(Environment("Excel"));
@@ -3930,14 +5556,22 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		System.out.println("que type ="+que_type);
 		
-		if(que_no>=5)
+		/*if(que_no>=5)
 		{
 			if(fl.elementDisplayed(driver, Que_Xpath+"["+que_no+"]","").equals("true"))
 			{
 				WebElement que_enable = driver.findElement(By.xpath(Que_Xpath+"["+que_no+"]"));
 				jse.executeScript("arguments[0].scrollIntoView();", que_enable);
 			}
+		}*/
+		if(que_no==1)
+			fl.ClickByXpath(driver, Que_Xpath+"[1]", "", "", "click on question Page", "", "");
+		else
+		{
+			int qu_no=que_no-1;
+			fl.ClickByXpath(driver, Que_Xpath+"["+qu_no+"]", "", "", "click on question Page", "", "");
 		}
+		fl.JS_Element_Find(driver, Que_Xpath+"["+que_no+"]");
 		String[] options = new String[]{Survey_Answers_ele[RC.Current_Coulumn_Number(Survey_Answers, "Option1")],
 				  Survey_Answers_ele[RC.Current_Coulumn_Number(Survey_Answers, "Option2")],
 				  Survey_Answers_ele[RC.Current_Coulumn_Number(Survey_Answers, "Option3")],
@@ -4325,6 +5959,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 	{
 		String logout_img_Xpath=Environment("logout_img_Xpath");
 		String CompanyLogout_Xpath=Environment("CompanyLogout_Xpath");
+		String CompanyLogout5_Xpath=Environment("CompanyLogout5_Xpath");
 		String CompanyLogout4_Xpath=Environment("CompanyLogout4_Xpath");
 		String companyLogoutMenu_Xpath=Environment("companyLogoutMenu_Xpath");
 		
@@ -4334,18 +5969,31 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			fl.ClickByXpath(driver, logout_img_Xpath, "", "Click on Logout Image", "", "", "");
 			List<WebElement> logout = driver.findElements(By.xpath(companyLogoutMenu_Xpath));
 			int logoutMenuItems=logout.size();
-			if(logoutMenuItems==5)
+			if(logoutMenuItems==6)
 			{
 				if(fl.elementDisplayed(driver, CompanyLogout_Xpath,"").equals("true"))
 				{
-					fl.ClickByXpath(driver, CompanyLogout_Xpath, "", "Click on Logout", "Company logged out succesfully", "", "");
+					fl.ClickByXpath(driver, CompanyLogout_Xpath, "", "Click on Logout", "Company logged out succesfully", "", "Y");
 				}
 			}
 			else
 			{
-				if(fl.elementDisplayed(driver, CompanyLogout4_Xpath,"").equals("true"))
+				if(logoutMenuItems==4)
 				{
-					fl.ClickByXpath(driver, CompanyLogout4_Xpath, "", "Click on Logout", "Individual Logged ot succesfully", "", "");
+					if(fl.elementDisplayed(driver, CompanyLogout4_Xpath,"").equals("true"))
+					{
+						fl.ClickByXpath(driver, CompanyLogout4_Xpath, "", "Click on Logout", "Individual Logged ot succesfully", "", "Y");
+					}
+				}
+				else
+				{
+					if(logoutMenuItems==5)
+					{
+						if(fl.elementDisplayed(driver, CompanyLogout5_Xpath,"").equals("true"))
+						{
+							fl.ClickByXpath(driver, CompanyLogout5_Xpath, "", "Click on Logout", "Individual Logged ot succesfully", "", "Y");
+						}
+					}
 				}
 			}
 		/*} 
@@ -4591,7 +6239,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		String Equal_Dur_Sec_Xpath=Environment("Equal_Dur_Sec_Xpath");
 		String TotalDur_Xpath=Environment("TotalDur_Xpath");
 		String ExpiresInDays_Xpath=Environment("ExpiresInDays_Xpath");
-		
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
 		try 
 		{
 			JavascriptExecutor jse  = (JavascriptExecutor)driver;
@@ -4612,9 +6260,9 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 				
 				if(SaveAsTempl!="")
 				{
-					fl.ClickByXpath(driver, SaveAsTemplate_Xpath, "", "saving as Template", "", "", "");
+					//fl.ClickByXpath(driver, SaveAsTemplate_Xpath, "", "saving as Template", "", "", "");
 					
-					fl.entervalueByXpath(driver, Template_Xpath, templateName, "Naming the Template", "", "", "", "");
+					//fl.entervalueByXpath(driver, Template_Xpath, templateName, "Naming the Template", "", "", "", "");
 				}
 			}
 			else
@@ -4626,7 +6274,7 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 				fl.entervalueByXpath(driver, QuizDescription_Xpath, QuizDescipt, "Entering Description", "", "", "", "");
 				
 				if(SaveAsTempl!="")
-				{
+				{					
 					fl.ClickByXpath(driver, SaveAsTemplate_Xpath, "", "saving as Template", "", "", "");
 					
 					fl.entervalueByXpath(driver, Template_Xpath, templateName, "Naming the Template", "", "", "", "");
@@ -4688,6 +6336,27 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 			e.printStackTrace();
 		}
 		
+		
+	}
+	public void checkQuizTemplates(WebDriver driver, String templatename) throws IOException, InterruptedException
+	{
+		Functional_Cases_propread fun_cas = new Functional_Cases_propread();
+		String Quiz_Xpath=Environment("Quiz_Xpath");
+		String QuizTemplates_Xpath=Environment("QuizTemplates_Xpath");
+		String advancedSearch_QT_Xpath=Environment("advancedSearch_QT_Xpath");
+		String new_QT_Xpath=Environment("new_QT_Xpath");
+		String templateName_QT_Xpath=Environment("templateName_QT_Xpath");
+		String more_QT_Xpath=Environment("more_QT_Xpath");
+		String quiznameCompare_QT_Xpath=Environment("quiznameCompare_QT_Xpath");
+		
+		fl.JS_Element_Find(driver, Quiz_Xpath);
+		fl.ClickByXpath(driver, Quiz_Xpath, "", "Created Template Validation", "Go to Quiz Menu", "", "");
+		fl.ClickByXpath(driver, QuizTemplates_Xpath, "", "", "Click on Quiz Templates", "", "");
+		fl.ClickByXpath(driver, advancedSearch_QT_Xpath, "", "", "Click on advanced search", "", "");
+		fl.entervalueByXpath(driver, templateName_QT_Xpath, templatename, "", "", "Enter QuizTemplate name", "", "");
+		
+		
+		fun_cas.listSize(driver, more_QT_Xpath, templatename, quiznameCompare_QT_Xpath);
 		
 	}
 	public void Quiz_Questions(WebDriver driver, String Que_text, String score, String seconds, String AnswerType, String NoofOptions_OR_Text,
@@ -4827,6 +6496,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 								
@@ -4843,6 +6514,8 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 							
@@ -4861,10 +6534,14 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_6_Quiz_Text_Xpath, option6, "option6 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_7_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_7_Quiz_Text_Xpath, option7, "option7 value has entered", "", "", "", "");
 								
@@ -4881,10 +6558,14 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_6_Quiz_Text_Xpath, option6, "option6 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_7_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_7_Quiz_Text_Xpath, option7, "option7 value has entered", "", "", "", "");
 							
@@ -4903,14 +6584,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_6_Quiz_Text_Xpath, option6, "option6 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_7_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_7_Quiz_Text_Xpath, option7, "option7 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_8_Quiz_Text_Xpath, option8, "option8 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_9_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_9_Quiz_Text_Xpath, option9, "option9 value has entered", "", "", "", "");
 								
@@ -4927,14 +6614,20 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 								fl.entervalueByXpath(driver, OPtions_3_Quiz_Text_Xpath, option3, "option3 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_4_Quiz_Text_Xpath, option4, "option4 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_5_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_5_Quiz_Text_Xpath, option5, "option5 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_6_Quiz_Text_Xpath, option6, "option6 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_7_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_7_Quiz_Text_Xpath, option7, "option7 value has entered", "", "", "", "");
 							
 								fl.entervalueByXpath(driver, OPtions_8_Quiz_Text_Xpath, option8, "option8 value has entered", "", "", "", "");
+								
+								fl.JS_Element_Find(driver, OPtions_9_Quiz_Text_Xpath);
 							
 								fl.entervalueByXpath(driver, OPtions_9_Quiz_Text_Xpath, option9, "option9 value has entered", "", "", "", "");
 							
@@ -5776,6 +7469,132 @@ public class Functional_Cases_propread extends Environment_proprties_Read
 		
 		
 	}
+	public List<String> quiz_ResponseView(WebDriver driver, String quizname, String enduser) throws InterruptedException, IOException
+	{
+		String Quiz_Xpath=Environment("Quiz_Xpath");
+		String Quizzes_Xpath=Environment("Quizzes_Xpath");
+		String AdvancedSearch_Xpath=Environment("AdvancedSearch_Xpath");
+		String QuizNameSearchBox_Xpath=Environment("QuizNameSearchBox_Xpath");
+		String MoreOptions_Quiz_Xpath=Environment("MoreOptions_Quiz_Xpath");
+		String quizname_QR_Xpath=Environment("quizname_QR_Xpath");
+		String quizname_QView_Xpath=Environment("quizname_QView_Xpath");
+		String ViewonGrid_Quiz_Xpath=Environment("ViewonGrid_Quiz_Xpath");
+		String responses_QR_Xpath=Environment("responses_QR_Xpath");
+		String viewDetails_QR_Xpath=Environment("viewDetails_QR_Xpath");
+		String responseName1_QR_Xpath=Environment("responseName1_QR_Xpath");
+		String responseName2_QR_Xpath=Environment("responseName2_QR_Xpath");
+		String extraresponseName_QR_Xpath=Environment("extraresponseName_QR_Xpath");
+		String getNoofQuestins_QR_Xpath=Environment("getNoofQuestins_QR_Xpath");
+		String totalQue_QR_Xpath=Environment("totalQue_QR_Xpath");
+		String totalQuestions_QR_Xpath=Environment("totalQuestions_QR_Xpath");
+		String queText_QR_Xpath=Environment("queText_QR_Xpath");
+		String totansText_QR_Xpath=Environment("totansText_QR_Xpath");
+		String ansText_QR_Xpath=Environment("ansText_QR_Xpath");
+		
+		String currenturl = driver.getCurrentUrl();
+		List<String> list = new ArrayList<>();
+		int total_que;
+		String tot_q;
+		String[] que_ans = null;
+		String ExtraAns=" ";
+		String extra="\n";
+		
+		if(!currenturl.contains("/QuizView/"))
+		{
+			fl.JS_Element_Find(driver, Quiz_Xpath);
+			fl.ClickByXpath(driver, Quiz_Xpath, "", "Get the Quiz WebLink and write to excel, go to Quiz Menu", "", "", "");
+			fl.ClickByXpath(driver, Quizzes_Xpath, "", "click on Quizzes", "", "", "");
+			fl.ClickByXpath(driver, AdvancedSearch_Xpath, "", "Click on Advanced Search", "", "", "");
+			fl.entervalueByXpath(driver, QuizNameSearchBox_Xpath, quizname, "Search with quizname", "", "", "", "");
+			fl.ClickByXpath(driver, MoreOptions_Quiz_Xpath, "", "", "", "", "");
+			fl.ClickByXpath(driver, MoreOptions_Quiz_Xpath, "", "click on More options", "", "", "");
+			fl.ClickByXpath(driver, ViewonGrid_Quiz_Xpath, "", "view the selected quiz", "", "", "");
+		}
+		String quiz_name = fl.getTextXPATH(driver, quizname_QView_Xpath, "", "", "Quiz name comparision", "", "");
+		if(!quiz_name.equals(quizname))
+		{
+			fl.JS_Element_Find(driver, Quiz_Xpath);
+			fl.ClickByXpath(driver, Quiz_Xpath, "", "Get the Quiz WebLink and write to excel, go to Quiz Menu", "", "", "");
+			fl.ClickByXpath(driver, Quizzes_Xpath, "", "click on Quizzes", "", "", "");
+			fl.ClickByXpath(driver, AdvancedSearch_Xpath, "", "Click on Advanced Search", "", "", "");
+			fl.entervalueByXpath(driver, QuizNameSearchBox_Xpath, quizname, "Search with quizname", "", "", "", "");
+			fl.ClickByXpath(driver, MoreOptions_Quiz_Xpath, "", "", "", "", "");
+			fl.ClickByXpath(driver, MoreOptions_Quiz_Xpath, "", "click on More options", "", "", "");
+			fl.ClickByXpath(driver, ViewonGrid_Quiz_Xpath, "", "view the selected quiz", "", "", "");
+		}
+		
+		fl.ClickByXpath(driver, responses_QR_Xpath, "", "", "Click on Responses tab", "", "");
+		String oldTab =driver.getWindowHandle();
+		System.out.println("Parent Window :"+oldTab);
+		
+		List<WebElement> views = driver.findElements(By.xpath(viewDetails_QR_Xpath));
+		int responses = views.size();
+		for(int i=1;i<=responses;i++)
+		{
+			String tot_username = fl.getTextXPATH(driver, responseName1_QR_Xpath+"["+i+"]"+responseName2_QR_Xpath, "", "", "find Endusername with "+enduser, "", "");
+			
+			String removeuser=fl.getTextXPATH(driver, responseName1_QR_Xpath+"["+i+"]"+extraresponseName_QR_Xpath, "", "", "find Endusername with "+enduser, "", "");
+			System.out.println("removable string "+removeuser);
+			String remove=extra+removeuser;
+			System.out.println("Total Removable "+remove);
+			String username=tot_username.replace(remove, "");
+			System.out.println("Username is : "+username);
+			System.out.println("enuser name is : "+enduser);
+			fl.JS_Element_Find(driver, viewDetails_QR_Xpath+"["+i+"]");
+			if(username.equals(enduser))
+			{
+				
+				fl.ClickByXpath(driver, viewDetails_QR_Xpath+"["+i+"]", "", "", "Click on view details", "", "");
+				Thread.sleep(3000);
+				Set<String> set = new HashSet<String>(driver.getWindowHandles());
+				for(String tab : set)
+				{
+					System.out.println("window :"+tab);
+				}
+				set.remove(oldTab);
+				driver.switchTo().window(set.iterator().next());
+				System.out.println("child window URL : "+driver.getCurrentUrl());
+				String quiz=fl.getTextXPATH(driver, quizname_QR_Xpath, "", "", "Getting quiz name from response view page", "", "");
+				list.add(quiz);
+				List<WebElement> No_of_Que=driver.findElements(By.xpath(getNoofQuestins_QR_Xpath));
+				total_que=No_of_Que.size();
+				if(fl.elementDisplayed(driver, totalQue_QR_Xpath,"").equals("true"))
+				{
+					WebElement tot_Ques = driver.findElement(By.xpath(totalQue_QR_Xpath));
+					tot_q=tot_Ques.getText();
+					//response ans info
+					list.add(tot_q);
+				}
+				System.out.println("Total Questions Are :"+total_que);
+				que_ans = new String[total_que-1];
+				for(int que=1;que <= total_que;que++)
+				{
+					String TotAns_answer = fl.getTextXPATH(driver, totalQuestions_QR_Xpath+"["+que+"]"+totansText_QR_Xpath, "", "", "Get the Total Answer", "", "");
+					//System.out.println(TotAns_answer);//Ans: checkbox1
+					String extra_Ans = fl.getTextXPATH(driver, totalQuestions_QR_Xpath+"["+que+"]"+ansText_QR_Xpath, "", "", "Get Extra Text in answer", "", "");
+					//System.out.println(extra_Ans);//Ans:
+					String remove_ans=extra_Ans+ExtraAns;//"Ans: "
+					String actualAns= TotAns_answer.replace(remove_ans, "");
+					System.out.println(actualAns);
+					//que_ans[que-1]=actualAns;
+					//response ans info
+					list.add(actualAns);
+					int nextque=que+1;
+					fl.JS_Element_Find(driver, totalQuestions_QR_Xpath+"["+nextque+"]");
+				}
+				driver.close();//response window close
+				driver.switchTo().window(oldTab);
+				driver.navigate().refresh();
+				return list;
+			}
+			else
+			{
+				System.out.println(username+"- Not matched with the user you mentioned in excel  "+enduser);
+			}
+		}
+		return null;
+	}
+	
 	public String beforeCreation_checkExistedPetitions(WebDriver driver, String petitionname) throws IOException, InterruptedException
 	{
 		String Petitions_Xpath=Environment("Petitions_Xpath");

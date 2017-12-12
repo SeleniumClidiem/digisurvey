@@ -42,7 +42,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 			//return driver;
@@ -59,12 +59,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 				
 			}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 		}
@@ -83,12 +83,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -108,12 +108,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -126,17 +126,36 @@ public class Functional_Libraries extends Environment_proprties_Read{
     		            .withTimeout(20, TimeUnit.SECONDS)
     		            .pollingEvery(10, TimeUnit.SECONDS)
     		            .ignoring(NoSuchElementException.class);
+    		//if(ActualResult=="SUCCESS")
     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
+    		/*if(ActualResult=="FAILED")
+        		reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");*/
     	}catch(NoSuchElementException e){
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}catch (WebDriverException e){
 			
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}
+    }
+public void disp_MessageFailed(WebDriver driver, String input, String Description, String ExpectedResult, String ActualResult, String Screenshot) throws InterruptedException{
+    	try{
+    		FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+    		            .withTimeout(20, TimeUnit.SECONDS)
+    		            .pollingEvery(10, TimeUnit.SECONDS)
+    		            .ignoring(NoSuchElementException.class);
+    		reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+    	}
+    	catch(Exception e)
+    	{
+    		
+    	}
+    	
+    		
+    	
     }
 	public void clear_textfield(WebDriver driver, String xpath)
 	{
@@ -146,7 +165,10 @@ public class Functional_Libraries extends Environment_proprties_Read{
     	{
     		driver.findElement(By.xpath(xpath));
     	}
-    	
+    	else
+    	{
+    		reportstep(driver,"", "", "FAILED", "", "","Y");
+    	}
     		
 	}
 	/*public WebElement findElementsByXpath(WebDriver driver,String Xpath)
@@ -195,12 +217,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -219,12 +241,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 			reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 		}catch(NoSuchElementException e){
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}catch (WebDriverException e){
 			
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}
 	}
@@ -244,12 +266,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -268,12 +290,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	    	}catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -294,12 +316,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}
 	     }
@@ -333,12 +355,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}
 	    	 
@@ -362,12 +384,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	     	}catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}catch (WebDriverException e){
 	 			
 	 			e.printStackTrace();
-	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			//System.out.println(e.getMessage());
 	 		}
 	     }
@@ -387,12 +409,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
     		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
     	}catch(NoSuchElementException e){
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}catch (WebDriverException e){
 			
 			e.printStackTrace();
-			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+			reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 			//System.out.println(e.getMessage());
 		}
     }
@@ -413,12 +435,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -439,12 +461,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -492,12 +514,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -518,10 +540,10 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	                 reportstep(driver1,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				System.out.println(e.getMessage());
 			}catch (WebDriverException e){
-				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver1,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 				//reportstep(input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
@@ -543,12 +565,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -563,6 +585,9 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		return element;
 	    	}
 	    	else
+	    	{
+	    		reportstep(driver,"", "", "FAILED", "", "","Y");
+	    	}
 	    		return null;
 	    }
 	    public String JS_Element_Find(WebDriver driver, String xpath)
@@ -573,6 +598,10 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    	{
 	    		js.executeScript("arguments[0].scrollIntoView();", element);
 	    		return "true";
+	    	}
+	    	else
+	    	{
+	    		reportstep(driver,"", "", "FAILED", "", "","Y");
 	    	}
 	    	return null;
 	    	
@@ -682,12 +711,12 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				//System.out.println(e.getMessage());
 			}
 	    }
@@ -708,13 +737,13 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
@@ -734,13 +763,13 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,input, Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}catch (WebDriverException e){
 				
 				e.printStackTrace();
-				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,input, Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
@@ -760,7 +789,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
@@ -780,7 +809,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		reportstep(driver,"", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	        }catch(NoSuchElementException e){
 				e.printStackTrace();
-				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+				reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,"Y");
 				Logs_DigiSurvey.info(e.getMessage());
 				//System.out.println(e.getMessage());
 			}
@@ -802,11 +831,11 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	         }catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			Logs_DigiSurvey.info(e.getMessage());
 	 			//System.out.println(e.getMessage());
 	 		}
-			return null;
+			return "false";
 	    	
 	    }
 	    public String getTextXPATH_WithoutClick(WebDriver driver, String locator,  String input, String Description, String ExpectedResult, String ActualResult, String Screenshot)
@@ -824,7 +853,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	     		//reportstep("", Description, "SUCCESS", ExpectedResult, ActualResult,Screenshot);
 	         }catch(NoSuchElementException e){
 	 			e.printStackTrace();
-	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,Screenshot);
+	 			reportstep(driver,"", Description, "FAILED", ExpectedResult, ActualResult,"Y");
 	 			Logs_DigiSurvey.info(e.getMessage());
 	 			//System.out.println(e.getMessage());
 	 		}
@@ -845,7 +874,7 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));
 	    		ATUReports.add(Description, input, ExpectedResult, ActualResult, LogAs.PASSED, new CaptureScreen(ScreenshotOf.BROWSER_PAGE));
 	    		
-	    	}else if(Status.toUpperCase().equals("SUCCESS") && Screenshot.toUpperCase().equals("N")) // where is this clss?
+	    	}else if(Status.toUpperCase().equals("SUCCESS") && Screenshot.toUpperCase().equals("")) // where is this clss?
 	    	{
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));can't have
 	    		ATUReports.add(Description, input, ExpectedResult, ActualResult, LogAs.PASSED, null);
@@ -854,13 +883,15 @@ public class Functional_Libraries extends Environment_proprties_Read{
 	    	
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));
 	    		ATUReports.add(Description, input, ExpectedResult, "Error Occured: Please Check Logs", LogAs.FAILED, new CaptureScreen(ScreenshotOf.BROWSER_PAGE));
-	    	}else if(Status.toUpperCase().equals("FAILED") && Screenshot.toUpperCase().equals("N"))
+	    	}else if(Status.toUpperCase().equals("FAILED") && Screenshot.toUpperCase().equals(""))
 	    	{
 	    		//ATUReports.add("pass step 1", LogAs.PASSED, new CaptureScreen(ScreenshotOf.Desktop));
 	    		ATUReports.add(Description, input, ExpectedResult, "Error Occured: Please Check Logs", LogAs.FAILED, null);
 	    	}
 	    	
+	    	
 	    }
+	    
 	    public String checkOptionValueInSelect(WebDriver driver,String selecttag_Xpath, String selectOptions_Xpath ,String SearchText) throws InterruptedException
 	    {
 	    	WebElement selecttag;
