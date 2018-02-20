@@ -5,10 +5,14 @@
     <classes>
       <class name="BatchExecution_Digi.Hybrid">
         <methods>
+          <include name="cf_AprvRrejectByAdmin"/>
           <include name="Setup"/>
           <include name="teardown"/>
-          <include name="CompanyLogin_CreatingUsers_FillingCompanyProfile_FillingMYProfile_CompanyLogout" invocation-numbers="0"/>
-          <include name="CompanyLogin_CreateSurvey_EditUpdateSurvey_ShareSurvey_EndUSerResponse_ResponseValidationByCompany" invocation-numbers="0"/>
+          <include name="publishSavedPetition"/>
+          <include name="validatePetiWebSite"/>
+          <include name="validateCF_WebSite"/>
+          <include name="Peti_AprvRrejectByAdmin"/>
+          <include name="publishSavedCrowdFund"/>
         </methods>
       </class> <!-- BatchExecution_Digi.Hybrid -->
     </classes>

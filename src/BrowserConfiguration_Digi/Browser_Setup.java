@@ -48,8 +48,8 @@ Functional_Cases_propread func_cases = new Functional_Cases_propread();
 			
 		}else if(Environment("Browser").equalsIgnoreCase("Chrome")){
 			
-			File file = new File("drivers\\chromedriver.exe");
-			System.setProperty("webdriver.chrome.driver",file.getAbsolutePath());
+			//File file = new File("drivers\\chromedriver.exe");
+			//System.setProperty("webdriver.chrome.driver",file.getAbsolutePath());
 			ChromeOptions o = new ChromeOptions();
 			o.addArguments("disable-extensions");
 			o.addArguments("--start-maximized");

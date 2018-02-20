@@ -130,81 +130,68 @@ public class Excel_Utils extends Environment_proprties_Read
 	
 	public Object[][] readXLSXFile1(String Sheet, int row) throws IOException //String[][]
 	{
-		
-
 		Worksheet = Workbook.getSheet(Sheet);
-		//int Total_Rows =Worksheet.getLastRowNum()+1;
-		Row r = Worksheet.getRow(0);              //any one row is enough to know how many columns are there
+		Row r = Worksheet.getRow(0);              
 		int Total_Column=  r.getLastCellNum();
-		
-		
-		//System.out.println(Total_Rows);
 		System.out.println(Total_Column);
 		Object[][] excelData = new Object[1][Total_Column];
-		/*excelData[0][0]="Y";
-		excelData[0][1]="name2";
-		excelData[0][2]="name3";
-		excelData[0][3]="name4";
-		excelData[0][4]="name1";
-		excelData[0][5]="name2";
-		excelData[0][6]="name3";
-		excelData[0][7]="name4";
-		System.out.println(excelData[0][0]);
-		System.out.println(excelData[0][1]);
-		System.out.println(excelData[0][2]);
-		System.out.println(excelData[0][3]);
-		System.out.println(excelData[0][4]);
-		System.out.println(excelData[0][5]);
-		System.out.println(excelData[0][6]);
-		System.out.println(excelData[0][7]);*/
-		
 		System.out.println("return data size:"+excelData.length);
 		System.out.println("excel rows and columns");
-		
-		
-		
-		/*for(int i=1;i<Total_Rows;i++)
-		{*/
-		
-			/*if(i==row)
-			{*/
-				//XSSFRow row = Worksheet.getRow(i);
-				
-//==========start==============		
 			for(int j=0;j<Total_Column;j++)
 			{
 					try
 					{
-						//System.out.println(Worksheet.getRow(i).getCell(j).getStringCellValue());
-						
 							if(Worksheet.getRow(row).getCell(j).getStringCellValue()!=null)//!=""
 							{
 								excelData[0][j]=Worksheet.getRow(row).getCell(j).getStringCellValue();
-								//System.out.println(excelData[0][j]);
-							
-								//return excelData;
+								
 							}
 							else
 								excelData[0][j]=null;
 						}
-						//return excelData;
-					
 					catch (NullPointerException e) 
 					{
 						System.out.println(e.getMessage());
 					}
+					System.out.println("Row:"+row+" Data:"+excelData[0][j]);
 			}
-//=========end========		
-					//System.out.println(j);
-					//System.out.println(excelData[i-1][j]);
-					//return excelData;
-				
-			/*}*/
-			//System.out.println(i);
-		/*}*/
-//========start==========		
+			return excelData;
+	}
+	public String[] readXLSXRunDesc(String Sheet) throws IOException //String[][]
+	{
+		
+
+		Worksheet = Workbook.getSheet(Sheet);
+		int Total_Rows =Worksheet.getLastRowNum()+1;
+		Row r = Worksheet.getRow(1);              //any one row is enough to know how many columns are there
+		int Total_Column=  r.getLastCellNum();
+		System.out.println(Total_Rows);
+		System.out.println(Total_Column);
+		String[] excelData = new String[Total_Column];
+		System.out.println("excel rows and columns");
+		for(int i=1;i<Total_Rows;i++)
+		{
+			//XSSFRow row = Worksheet.getRow(i);
+			for(int j=0;j<Total_Column;j++)
+			{
+				try
+				{
+					//System.out.println(Worksheet.getRow(i).getCell(j).getStringCellValue());
+					if(Worksheet.getRow(i).getCell(j).getStringCellValue()!=null)
+					{
+	//					excelData[i-1][j]=Worksheet.getRow(i).getCell(j).getStringCellValue();
+					}
+		//			else
+	//					excelData[i-1][j]="Blank";
+					}
+				catch (NullPointerException e)
+				{
+					System.out.println(e.getMessage());
+				}
+	//			System.out.println(excelData[i-1][j]);
+			}
+		}
 		return excelData;
-//=======end==========		
 		
 	}
 	public  String getTestCaseName(String sTestCase)throws Exception{

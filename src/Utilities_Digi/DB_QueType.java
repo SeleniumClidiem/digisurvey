@@ -57,7 +57,8 @@ public class DB_QueType {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			conn = DriverManager.getConnection(connectionUrl);
 			stmt = conn.createStatement();
-			String SQL="SELECT AnswerType FROM Tbl_MAnswerTypes where AnswerTypeId= (SELECT AnswerType FROM Tbl_LSurveyQuestions where Questionnaire=(SELECT QuestionnaireId FROM Tbl_LSurveys where QuestionnaireName='"+surveyname+"') AND Question='"+quetext+"')";
+			//String SQL="SELECT AnswerType FROM Tbl_MAnswerTypes where AnswerTypeId= (SELECT AnswerType FROM Tbl_LSurveyQuestions where Questionnaire=(SELECT QuestionnaireId FROM Tbl_LSurveys where QuestionnaireName='"+surveyname+"') AND Question='"+quetext+"')";
+			String SQL="Select MAT.AnswerType FROM Tbl_LSurveyQuestions SQ Inner JOIN Tbl_LSurveyQuestionsRelationship SQR ON  SQR.QuestionId = SQ.QuestionId Inner JOIN Tbl_MAnswerTypes MAT ON  MAT.AnswerTypeId = SQ.AnswerType Inner JOIN Tbl_LSurveys Ls ON  Ls.QuestionnaireId = SQR.SurveyId  where SQ.Question = '"+quetext+"'  AND Ls.QuestionnaireName = '"+surveyname+"'";
 			rs = stmt.executeQuery(SQL);
 			
 		 while (rs.next()) {  

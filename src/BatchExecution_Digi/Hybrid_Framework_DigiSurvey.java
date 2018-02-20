@@ -44,7 +44,6 @@ import atu.testng.reports.listeners.MethodListener;
 	  MethodListener.class })
 class Hybrid_Framework_DigiSurvey extends Browser_Setup
 {
-	
 	{
 		System.setProperty("atu.reporter.config", "lib//atu.properties");
 	}
@@ -181,7 +180,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 							  Org_Reg_ele[Org_Reg_ind]=RC.getStringCellData(Org_Reg_index, Org_Reg_ind, Org_Reg);
 							  System.out.println(Org_Reg_ele[Org_Reg_ind]); //call login as company method, pass array values
 						  }
-						  if(S26=="")
+						  if(S26=="")//ReferFriends  by default  ==>firsttimeRegister=1
 						  {
 							  func_cases.companyRegistration(driver, firsttimeRegister, 
 									  Org_Reg_ele[RC.Current_Coulumn_Number(Org_Reg, "YourName")],
@@ -453,7 +452,10 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "SurveyName")], 
 								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "Description")],
 								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "SurveyImage")],
+								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "Languages")],
+								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "AllowAnonymous")],
 								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "TemplateName")],
+								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "LandingPage")],
 								  create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "QuestioID")]);
 							  //skip last column in function call
 						  
@@ -499,6 +501,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 									  } 
 									  func_cases.AddQuestionto_CreateSurvey(driver, create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "EnterUrQue")],
 											  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "Tags")],
+											  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "QueGroup")],
 											  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "AnswerType")],
 											  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "NumberOfOptions")],
 											  Que_No-1,create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "OPtion1")],
@@ -558,7 +561,9 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "Group_Name")], 
 						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "SurveyName")], 
 						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "Description")], 
-						  				Question_NUmber);
+						  				Question_NUmber,create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "Languages")],
+						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "AllowAnonymous")],
+						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "LandingPage")]);
 						  		func_cases.checkSurveyTemplates(driver,
 						  				create_suvey_ele[RC.Current_Coulumn_Number(create_suvey, "TemplateName")]);
 						  }
@@ -648,6 +653,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 										  func_cases.AddQuestionto_CreateSurvey(driver, 
 												  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "EnterUrQue")],
 												  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "Tags")],
+												  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "QueGroup")],
 												  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "AnswerType")],
 												  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "NumberOfOptions")],
 												  Que_No,create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "OPtion1")],
@@ -777,6 +783,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 														  func_cases.AddQuestionto_CreateSurvey(driver, 
 																  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "EnterUrQue")],
 																  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "Tags")],
+																  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "QueGroup")],
 																  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "AnswerType")],
 																  create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "NumberOfOptions")],
 																  Que_No,create_Que_ele[RC.Current_Coulumn_Number(CreateSurvey_Questions, "OPtion1")],
@@ -961,9 +968,11 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 			  
 				  
 						  }
+//MODIFY, AT END added ""						  
 						  func_cases.enduser_Login(driver, EndUser_ele[RC.Current_Coulumn_Number(EndUser, "WebLink")],
 								  EndUser_ele[RC.Current_Coulumn_Number(EndUser, "EndUserEmail")],
-								  EndUser_ele[RC.Current_Coulumn_Number(EndUser, "password")]);
+								  EndUser_ele[RC.Current_Coulumn_Number(EndUser, "password")],
+								  EndUser_ele[RC.Current_Coulumn_Number(EndUser, "Anonymous?")],"");
 //added from else block , after check delete else block===============						  
 						  System.out.println(share+" no of shared survey links "); 
 						  
@@ -1266,7 +1275,8 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 												  }
 												  func_cases.enduser_Login(driver, EndUser_ele1[RC.Current_Coulumn_Number(EndUser1, "WebLink")],
 														  EndUser_ele1[RC.Current_Coulumn_Number(EndUser1, "EndUserEmail")],
-														  EndUser_ele1[RC.Current_Coulumn_Number(EndUser1, "password")]);
+														  EndUser_ele1[RC.Current_Coulumn_Number(EndUser1, "password")],
+														  EndUser_ele1[RC.Current_Coulumn_Number(EndUser1, "Anonymous?")],view_details[3]);
 												  //==quizpart start
 												  String  oldTab1 = driver.getWindowHandle();
 												  Thread.sleep(3000);
@@ -3050,6 +3060,8 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 						  {
 							  func_cases.check_CP_Filled(driver, 
 								  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath")],
+								  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath1")],
+								  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath2")],
 								  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "overview")],
 								  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "background")]);
 						  }
@@ -3115,6 +3127,8 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 									  {
 									  	func_cases.check_CP_Filled(driver, 
 											  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath")],
+											  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath1")],
+											  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "filepath2")],
 											  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "overview")],
 											  publish_saved_quiz_ele[RC.Current_Coulumn_Number(publish_saved_quiz, "background")]);
 									  	func_cases.publishExistedQuiz(driver, 
@@ -3349,7 +3363,8 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 								  //loginas digi user or company inorder to give reponse to shared Quiz
 								  func_cases.enduser_Login(driver, Quiz_EndUser_ele[RC.Current_Coulumn_Number(Quiz_EndUser, "WebLink")],
 								  Quiz_EndUser_ele[RC.Current_Coulumn_Number(Quiz_EndUser, "EndUserEmail")],
-								  Quiz_EndUser_ele[RC.Current_Coulumn_Number(Quiz_EndUser, "password")]);
+								  Quiz_EndUser_ele[RC.Current_Coulumn_Number(Quiz_EndUser, "password")],
+								  Quiz_EndUser_ele[RC.Current_Coulumn_Number(Quiz_EndUser, "Anonymous?")],"");
 //after login as end user, open new tab, get the quiz link from excel								  
 								  String oldTab = driver.getWindowHandle();
 								  Thread.sleep(3000);
@@ -3487,28 +3502,57 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 						  {
 							  
 						  	func_cases.createPetition(driver, 
+						  			Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "CampaignTitle")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Campaign Type")], 
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Petition_Category")], 
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Petition_Title")], 
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Tags")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "EndDate")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Indefinite")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "VideoLink")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "CurrencyType")], 
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "FundGoal")], 
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "CollectFundLater")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "SignatureRequired")],
+								  
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "SocialImage")],//
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Gal_Img1")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Gal_Img2")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Gal_Img3")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Gal_Img4")],
+								  
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Dmaker_Name")],
 								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Dmaker_Designation")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Overview")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Overview_Image")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Background")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "BackgroundImage")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Solution")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "SolutionImage")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "RiskChallenge")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "RiskChallengeImage")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "SupportingDocumentsPath")],
-								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "FAQ")]);
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Sup_Img1")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Sup_Img2")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Sup_Img3")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Sup_Img4")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Sup_Img5")], 
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "FAQ")],//PetitionDescription
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "PetitionDescription")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "LinkText")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Link")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "NewWindow")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "BrowseImage")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "ImageLink")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "occupation")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "VisaStatus")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Age")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Salary")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Textbox_Q")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "DropDown_Q")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "No_Options")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options1")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options2")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options3")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options4")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options5")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options6")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options7")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options8")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options9")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Options10")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "submitForApproval")],
+								  Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "SaveAsDraft")]);
 								  
 //want to save created petition, check the save column is not null in create petition sheet						  
 						  	/*if(Create_Petition_ele[RC.Current_Coulumn_Number(Create_Petition, "Save")]!="")
@@ -3630,7 +3674,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 			  
 				  
 						  }
-						  String petitiontitle_check=func_cases.companyBase(driver,
+						  String petitiontitle_check=func_cases.companyBase_Petitions(driver,
 									SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "PetitionTitle")]);
 				
 						  func_cases.petitionSign_ExistedUser(driver, petitiontitle_check,
@@ -3638,7 +3682,15 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "password")],
 								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Address")],
 								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "OrgFor")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Occupation")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Visa")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "DOB")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Salary")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Sign")],
 								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Donate?")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "TextAns")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "DropdownAns")],
+								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Amt_Donate")],
 								  SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "ReadTerms")]);
 						  
 						  if(SignPetition_Exist_ele[RC.Current_Coulumn_Number(SignPetition_ExistedUser, "Donate?")]!="")
@@ -3721,25 +3773,30 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 			  
 				  
 						  }
-						  String petitiontitle_check=func_cases.companyBase(driver,
+						  String petitiontitle_check=func_cases.companyBase_Petitions(driver,
 								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "PetitionTitle")]);
 						  
 						  func_cases.petitionSign_NewUser(driver,
-								  petitiontitle_check,
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "FirstName")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "LastName")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "EmailID")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "CountryCode")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "PhoneNumber")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Address")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Occupation")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "OrganizationFor")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Visa Status")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Signature")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "CreateProfile")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Password")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Donate?")],
-								  SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Read_Policy")]);
+									petitiontitle_check,
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "FirstName")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "LastName")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "EmailID")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "CountryCode")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "PhoneNumber")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Address")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Occupation")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "OrganizationFor")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Visa Status")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "DOB")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Salary")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Signature")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "CreateProfile")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Password")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Donate?")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "TextAns")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "DropdownAns")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Amt_Donate")],
+									SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Read_Policy")]);
 						  
 						  if(SignPetition_New_ele[RC.Current_Coulumn_Number(SignPetition_NewUser, "Donate?")]!="")
 						  {
@@ -3817,7 +3874,7 @@ class Hybrid_Framework_DigiSurvey extends Browser_Setup
 			  
 				  
 						  }
-						  String petitiontitle_check=func_cases.companyBase(driver,
+						  String petitiontitle_check=func_cases.companyBase_Petitions(driver,
 								  Donate_ExistedUser_ele[RC.Current_Coulumn_Number(Donate_ExistedUser, "PetitionTitle")]);
 						  func_cases.donateFund(driver,petitiontitle_check,
 								  Donate_ExistedUser_ele[RC.Current_Coulumn_Number(Donate_ExistedUser, "Amount")],

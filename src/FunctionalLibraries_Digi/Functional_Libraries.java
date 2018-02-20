@@ -163,7 +163,7 @@ public void disp_MessageFailed(WebDriver driver, String input, String Descriptio
 		WebElement element = driver.findElement(By.xpath(xpath));
     	if(element!=null)
     	{
-    		driver.findElement(By.xpath(xpath));
+    		driver.findElement(By.xpath(xpath)).click();;
     	}
     	else
     	{
@@ -252,7 +252,7 @@ public void disp_MessageFailed(WebDriver driver, String input, String Descriptio
 	}
 
 	    
-	    public void entervalueByID(WebDriver driver, String ID, String value,  String input, String Description, String ExpectedResult, String ActualResult, String Screenshot){
+	public void entervalueByID(WebDriver driver, String ID, String value,  String input, String Description, String ExpectedResult, String ActualResult, String Screenshot){
 	    	
 	    	try{
 	    		
@@ -610,9 +610,15 @@ public void disp_MessageFailed(WebDriver driver, String input, String Descriptio
 	   {
 		   try
 		   {
-			   WebElement element = driver.findElement(By.xpath(xpath));
+			   FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+			            .withTimeout(60, TimeUnit.SECONDS)
+			            .pollingEvery(10, TimeUnit.SECONDS)
+			            .ignoring(NoSuchElementException.class);
+	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+			  WebElement element = driver.findElement(By.xpath(xpath));
 			   System.out.println(element.isDisplayed());
 			   if(element.isDisplayed())
+	    		
 			   {
 				   Logs_DigiSurvey.info(Description);
 				   return "true";
@@ -640,6 +646,11 @@ public void disp_MessageFailed(WebDriver driver, String input, String Descriptio
 	   {
 		   try
 		   {
+			   FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+			            .withTimeout(60, TimeUnit.SECONDS)
+			            .pollingEvery(10, TimeUnit.SECONDS)
+			            .ignoring(NoSuchElementException.class);
+	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 			   WebElement element = driver.findElement(By.xpath(xpath));
 			   System.out.println(element.isEnabled());
 			   if(element.isEnabled())
@@ -673,6 +684,11 @@ public void disp_MessageFailed(WebDriver driver, String input, String Descriptio
 	   {
 		   try
 		   {
+			   FluentWait<WebDriver> waitforElement = new FluentWait<WebDriver>(driver)
+			            .withTimeout(60, TimeUnit.SECONDS)
+			            .pollingEvery(10, TimeUnit.SECONDS)
+			            .ignoring(NoSuchElementException.class);
+	    		waitforElement.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
 			   WebElement element = driver.findElement(By.xpath(xpath));
 			   System.out.println(element.isSelected());
 			   if(element.isSelected())
